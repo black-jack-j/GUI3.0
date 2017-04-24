@@ -18,7 +18,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
-
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,6 +27,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.widgets.Scale;
 
 public class App {
 
@@ -48,6 +50,7 @@ public class App {
 	Color lightGrey = new Color(dev,121,121,121);
 	Color darkWhite = new Color(dev,148,148,148);
 	Color darkGrey = new Color(dev,107,107,107);
+	private KeeperFilter filterK;
 	private Table TerritoryView;
 	private Table Keepers;
 	private Label vSize;
@@ -104,11 +107,12 @@ public class App {
 					}
 					default: break;
 				}
-				updateKeeperView();
+				App.this.keeperReaded();
 			}
 
 			@Override
 			public void keeperReaded(KeeperSelectionEvent kse) {
+				editor.setVisible(true);
 				TerritoryViewer.refresh();
 				vName.setText(keepModel.getKeep().getName());
 				vSize.setText(String.valueOf(keepModel.getKeep().getSize()));
@@ -138,7 +142,6 @@ public class App {
 		mainScreen.setBackground(darkWhite);
 		mainScreen.setLayout(null);
 		
-		
 		Composite KeeperView = new Composite(mainScreen, SWT.NONE);
 		KeeperView.setBounds(20, 119, 464, 560);
 		
@@ -146,7 +149,7 @@ public class App {
 		LFilter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				FilterWindow filter = new FilterWindow(shlMarko);
+				FilterWindow filter = new FilterWindow(shlMarko,TerritoryViewer,0,100);
 			}
 		});
 		LFilter.setBounds(429, 494, 25, 25);
@@ -335,6 +338,14 @@ public class App {
 		JSizeCol.getColumn().setResizable(false);
 		JSizeCol.getColumn().setText("size");
 		
+		search.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				filterK.setSearch(search.getText());
+				KeeperViewer.refresh();
+			}
+		});
+		filterK = new KeeperFilter();
+		KeeperViewer.addFilter(filterK);
 		KeeperViewer.addSelectionChangedListener(new ISelectionChangedListener(){
 
 			@Override
@@ -343,9 +354,8 @@ public class App {
 				keepModel = (Note)selection.getFirstElement();
 				TerritoryViewer.setInput(keepModel);
 				TerritoryViewer.setComparator(comparator);
-				KeeperViewer.refresh();
-				updateTerritoryView();
-				editor.setVisible(true);
+				KeeperSelectionEvent kse = new KeeperSelectionEvent(arg0, keepModel.getKeep());
+				model.keeperReaded(kse);
 			}
 			
 		});
@@ -356,10 +366,7 @@ public class App {
 		Keepers.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				int i = Keepers.getSelectionIndex();
-				IStructuredSelection selection1 = (IStructuredSelection) KeeperViewer.getSelection();
-				Note n1 = (Note) selection1.getFirstElement();
-				System.out.println(n1.getPath().toString());
+				int i = Keepers.getSelectionIndex(); 
 				if (i!=-1){
 					if(e.button==3){
 						Menu keepConMenu = new Menu(Keepers);
@@ -371,8 +378,8 @@ public class App {
 						edit.setText("edit");
 						save.setText("save");
 						saveAs.setText("save as");
+						info.setText("info");
 						delete.setText("delete");
-						edit.setText("info");
 						Keepers.setMenu(keepConMenu);
 						save.addSelectionListener(new SelectionAdapter(){
 							public void widgetSelected(SelectionEvent se){
@@ -408,6 +415,7 @@ public class App {
 							public void widgetSelected(SelectionEvent se){
 								IStructuredSelection selection = (IStructuredSelection) KeeperViewer.getSelection();
 								Note n = (Note)selection.getFirstElement();
+								//TO-DO
 								System.out.println(n.getPath().toString());
 							}
 						});
@@ -473,8 +481,10 @@ public class App {
 			vSize.setText(String.valueOf(keepModel.getKeep().getSize()));
 		}
 	}
-	void updateKeeperView(){
+	void keeperReaded(){
 		KeeperViewer.refresh();
+		TerritoryViewer.refresh();
+		editor.setVisible(true);
 	}
 	
 	private SelectionAdapter getSelectionAdapter(final TableColumn column,
