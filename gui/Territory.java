@@ -1,4 +1,4 @@
-
+package gui;
 public class Territory {
 	private String name;
 	private double square;

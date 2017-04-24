@@ -1,3 +1,5 @@
+package gui;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class KeeperController {
 	Set<Note> collections;
 	private Path workPath;
 	private List<KeeperListener> keeperListeners;
-	KeeperController(){
+	public KeeperController(){
 		collections = new TreeSet<>();
 		keeperListeners = new ArrayList<>();
 		workPath = Paths.get("C:/users/fitisovdmtr/lab/config.xml");
@@ -208,64 +210,5 @@ public class KeeperController {
 	}
 	public String showPath(Note n){
 		return n.getPath().toString();
-	}
-}
-class KeepModel{
-	private List<TerritoryListener> territoryListeners;
-	private Keeper keep;
-	KeepModel(Keeper k){
-		this.keep = k;
-		territoryListeners = new ArrayList<>();
-	}
-	
-	void addTerritory(String key, Territory t){
-		this.keep.addComponent(key, t);
-	}
-	
-	String getName(){
-		return keep.getName();
-	}
-	String getSize(){
-		return String.valueOf(keep.getCollection().size());
-	}
-	List<List<String>> getTerritory(){
-		List<List<String>> outer = new ArrayList<>();
-		keep.getCollection().forEach((String key,Territory t)->{
-			List<String> inner = new ArrayList<>();
-			inner.add(key);
-			inner.add(t.getName());
-			inner.add(String.valueOf(t.getSquare()));
-			outer.add(inner);
-		});
-		return outer;
-	}
-	
-	void addTerritoryListener(TerritoryListener tl){
-		this.territoryListeners.add(tl);
-	}
-	void removeTerritoryListeners(TerritoryListener tl){
-		this.territoryListeners.remove(tl);
-	}
-	void territoryCreated(TerritoryAddEvent tae){
-		this.territoryListeners.forEach((TerritoryListener tl)->tl.territoryCreated(tae));
-	}
-	void territoryRemoved(TerritoryRemoveEvent tre){
-		this.territoryListeners.forEach((TerritoryListener tl)->tl.territoryRemoved(tre));
-	}
-	Keeper getKeeper(){
-		return keep;
-	}
-	void removeTerritory(String key){
-		keep.removeComponent(key);
-	}
-	void removeLower(String key){
-		keep.removeLower(keep.getComponent(key));
-	}
-	Map<String, Territory> getTerr(){
-		return this.keep.getCollection();
-	}
-
-	public void removeComponent(String s) {
-		keep.removeComponent(s);
 	}
 }

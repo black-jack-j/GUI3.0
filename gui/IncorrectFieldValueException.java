@@ -1,3 +1,4 @@
+package gui;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
