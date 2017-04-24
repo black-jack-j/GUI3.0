@@ -411,7 +411,7 @@ public class App {
 								System.out.println(n.getPath().toString());
 							}
 						});
-					}else Keepers.deselectAll();
+					}
 				}
 			}
 		});
