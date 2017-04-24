@@ -1,9 +1,7 @@
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
@@ -15,10 +13,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -55,6 +52,7 @@ public class App {
 	private Table Keepers;
 	private Label vSize;
 	private Label vName;
+	private TerritoryViewerComparator comparator;
 
 	/**
 	 * Launch the application.
@@ -89,6 +87,7 @@ public class App {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
+		comparator = new TerritoryViewerComparator();
 		model = new KeeperController();
 		model.addKeeperListener(new KeeperListener(){
 
@@ -105,7 +104,7 @@ public class App {
 					}
 					default: break;
 				}
-				KeeperViewer.refresh();
+				updateKeeperView();
 			}
 
 			@Override
@@ -175,7 +174,6 @@ public class App {
 		LInsert.addMouseListener(new MouseAdapter(){
 			public void mouseDown(MouseEvent e){
 				AddShell form = new AddShell(keepModel, shlMarko,400,200);
-				updateTerritoryView();
 			}
 		});
 		
@@ -236,7 +234,8 @@ public class App {
 								IStructuredSelection selection = TerritoryViewer.getStructuredSelection();
 								String s = ((Entry<String,Territory>) (selection.getFirstElement())).getKey();	
 								keepModel.getKeep().removeComponent(s);
-								updateTerritoryView();
+								KeeperRefreshEvent kre = new KeeperRefreshEvent(arg0);
+								model.keeperUpdated(kre);
 							}
 							
 						});
@@ -247,7 +246,8 @@ public class App {
 								IStructuredSelection selection = TerritoryViewer.getStructuredSelection();
 								String tmp = ((Entry<String,Territory>) (selection.getFirstElement())).getKey();	
 								keepModel.getKeep().removeLower(tmp);
-								updateTerritoryView();
+								KeeperRefreshEvent kre = new KeeperRefreshEvent(arg0);
+								model.keeperUpdated(kre);
 							}
 							
 						});
@@ -269,7 +269,9 @@ public class App {
 				Entry<String,Territory> entry = (Entry<String, Territory>)o;
 					return entry.getKey();
 			}
-		});
+		});	
+		TableColumn tmpCol = keyCol.getColumn();
+		tmpCol.addSelectionListener(this.getSelectionAdapter(tmpCol, 0));
 		
 		TableViewerColumn nameCol = new TableViewerColumn(TerritoryViewer, SWT.NONE);
 		nameCol.getColumn().setResizable(false);
@@ -282,6 +284,8 @@ public class App {
 				return entry.getValue().getName();
 			}
 		});
+		tmpCol = nameCol.getColumn();
+		tmpCol.addSelectionListener(this.getSelectionAdapter(tmpCol, 1));
 		
 		TableViewerColumn squareCol = new TableViewerColumn(TerritoryViewer, SWT.NONE);
 		squareCol.getColumn().setResizable(false);
@@ -294,6 +298,8 @@ public class App {
 				return String.valueOf(entry.getValue().getSquare());
 			}
 		});
+		tmpCol = squareCol.getColumn();
+		tmpCol.addSelectionListener(this.getSelectionAdapter(tmpCol, 2));
 		
 		KeeperModeView = new Composite(mainScreen, SWT.NONE);
 		KeeperModeView.setBounds(494, 119, 565, 560);
@@ -336,6 +342,7 @@ public class App {
 				IStructuredSelection selection = (IStructuredSelection)arg0.getSelection();
 				keepModel = (Note)selection.getFirstElement();
 				TerritoryViewer.setInput(keepModel);
+				TerritoryViewer.setComparator(comparator);
 				KeeperViewer.refresh();
 				updateTerritoryView();
 				editor.setVisible(true);
@@ -350,17 +357,22 @@ public class App {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				int i = Keepers.getSelectionIndex();
+				IStructuredSelection selection1 = (IStructuredSelection) KeeperViewer.getSelection();
+				Note n1 = (Note) selection1.getFirstElement();
+				System.out.println(n1.getPath().toString());
 				if (i!=-1){
 					if(e.button==3){
 						Menu keepConMenu = new Menu(Keepers);
 						MenuItem edit = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem save = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem saveAs = new MenuItem(keepConMenu,SWT.NONE);
+						MenuItem info = new MenuItem(keepConMenu, SWT.NONE);
 						MenuItem delete = new MenuItem(keepConMenu,SWT.NONE);
 						edit.setText("edit");
 						save.setText("save");
 						saveAs.setText("save as");
 						delete.setText("delete");
+						edit.setText("info");
 						Keepers.setMenu(keepConMenu);
 						save.addSelectionListener(new SelectionAdapter(){
 							public void widgetSelected(SelectionEvent se){
@@ -392,7 +404,14 @@ public class App {
 								
 							}
 						});
-					}
+						info.addSelectionListener(new SelectionAdapter(){
+							public void widgetSelected(SelectionEvent se){
+								IStructuredSelection selection = (IStructuredSelection) KeeperViewer.getSelection();
+								Note n = (Note)selection.getFirstElement();
+								System.out.println(n.getPath().toString());
+							}
+						});
+					}else Keepers.deselectAll();
 				}
 			}
 		});
@@ -435,6 +454,7 @@ public class App {
 				}
 			}
 		});
+		
 		MenuItem mExit = new MenuItem(menu_1, SWT.NONE);
 		mExit.setText("exit");
 		mExit.addSelectionListener(new SelectionAdapter(){
@@ -456,4 +476,19 @@ public class App {
 	void updateKeeperView(){
 		KeeperViewer.refresh();
 	}
+	
+	private SelectionAdapter getSelectionAdapter(final TableColumn column,
+            final int index) {
+    SelectionAdapter selectionAdapter = new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                    comparator.setColumn(index);
+                    int dir = comparator.getDirection();
+                    TerritoryViewer.getTable().setSortDirection(dir);
+                    TerritoryViewer.getTable().setSortColumn(column);
+                    TerritoryViewer.refresh();
+            }
+    };
+    return selectionAdapter;
+}
 }
