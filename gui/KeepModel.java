@@ -7,7 +7,7 @@ import java.util.Map;
 public class KeepModel{
 	private List<TerritoryListener> territoryListeners;
 	private Keeper keep;
-	KeepModel(Keeper k){
+	public KeepModel(Keeper k){
 		this.keep = k;
 		territoryListeners = new ArrayList<>();
 	}

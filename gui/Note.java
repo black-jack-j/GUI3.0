@@ -7,7 +7,7 @@ import java.util.Comparator;
 public class Note implements Comparable<Note>{
 	private Path path;
 	private KeepModel keep;
-	Note(Path p, KeepModel k){
+	public Note(Path p, KeepModel k){
 		path = p;
 		keep = k;
 	}

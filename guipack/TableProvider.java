@@ -24,9 +24,10 @@ public class TableProvider<T> {
 		cols = new ArrayList<>();
 		viewer = new TableViewer(parent, style);
 		viewer.setContentProvider(e);
+		input = o;
 		viewer.setInput(input);
 	}
-	public void addColumns(ColumnComparator<T> comparators, ColumnLabelProvider[] providers,String[] names, int...width){
+	public void addColumns(ColumnComparator comparators, ColumnLabelProvider[] providers,String[] names, int...width){
 		for(int i =0;i<names.length;i++){
 			TableViewerColumn col = new TableViewerColumn(viewer, SWT.NONE);
 			col.getColumn().setText(names[i]);
@@ -49,7 +50,7 @@ public class TableProvider<T> {
 			cols.add(col);
 		}
 	}
-	private SelectionAdapter getSelectionAdapter(ColumnComparator<T> comparator, TableColumn t, int index){
+	private SelectionAdapter getSelectionAdapter(ColumnComparator comparator, TableColumn t, int index){
 		SelectionAdapter selection = new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -71,5 +72,8 @@ public class TableProvider<T> {
 	}
 	public Table getTable(){
 		return viewer.getTable();
+	}
+	public TableViewer getViewer(){
+		return viewer;
 	}
 }
