@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="cp1251"?>
+<storage name="Default" type="HashMap">
+  <object key="new">
+    <name type="String">shit</name>
+    <square type="double">55.0</square>
+  </object>
+  <object key="something">
+    <name type="String">something</name>
+    <square type="double">42.0</square>
+  </object>
+</storage>

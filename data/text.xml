@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="cp1251"?>
+<storage name="Cities" type="HashMap">
+  <object key="no">
+    <name type="String">qr</name>
+    <square type="double">45.0</square>
+  </object>
+  <object key="capital">
+    <name type="String">Moscow</name>
+    <square type="double">150.0</square>
+  </object>
+  <object key="ce">
+    <name type="String">swt</name>
+    <square type="double">345.0</square>
+  </object>
+  <object key="arc">
+    <name type="String">no</name>
+    <square type="double">34.0</square>
+  </object>
+  <object key="north-capital">
+    <name type="String">Saint-Petersburg</name>
+    <square type="double">145.0</square>
+  </object>
+</storage>

@@ -21,9 +21,11 @@ import filterpack.KeeperFilter;
 import gui.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
@@ -31,6 +33,10 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.browser.Browser;
 
 public class AppTester {
@@ -39,6 +45,18 @@ public class AppTester {
 	private KeeperController model;
 	private Point minSize;
 	protected Shell shell;
+	
+	private Label editor;
+	private Label LInsert;
+	private Label LFilter;
+
+	Device dev = Display.getCurrent();
+	Color deepGrey = new Color(dev,81,81,81);
+	Color white = new Color(dev,255,255,255);
+	Color lightGrey = new Color(dev,121,121,121);
+	Color darkWhite = new Color(dev,148,148,148);
+	Color darkGrey = new Color(dev,107,107,107);
+	
 	/**
 	 * Launch the application.
 	 * @param args
@@ -88,7 +106,7 @@ public class AppTester {
 				}
 				
 			};
-			model = new KeeperController("C:/users/fitisovdmtr/lab/config.xml", tmp);
+			model = new KeeperController("C:/Users/Yunicoed/Desktop/LW6/config.xml", tmp);
 		} catch (IOException e) {
 			System.out.println("failed to connect to config file");
 			e.printStackTrace();
@@ -123,16 +141,17 @@ public class AppTester {
 		Composite mainScreen = new Composite(shell, SWT.NONE);
 		Composite leftTable = FormDataObject.getFormedComposite(1,15,40,99, mainScreen, SWT.NONE);
 		Composite rightTable = FormDataObject.getFormedComposite(61,15,99,99, mainScreen, SWT.NONE);
-		
+		Composite navButtons = FormDataObject.getFormedComposite(90, 78, 98, 98, leftTable, SWT.NONE);
 		leftTable.setLayout(new FormLayout());
 		rightTable.setLayout(new FormLayout());
+		navButtons.setLayout(new FormLayout());
 		
 		shell.setMinimumSize(new Point(640, 480));
 		minSize = shell.getMinimumSize();
 		minSize.y = 720;
 		shell.setSize(640, 480);
 		
-		/**shell.addControlListener(new ControlAdapter() {
+		/*shell.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
 				if(shell.getSize().x <= minSize.x & shell.getSize().y >= minSize.y){
@@ -167,13 +186,58 @@ public class AppTester {
 					
 				}
 			}
-		});**/
+		});*/
 		shell.setText("SWT Application");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		
 		FormLayout fl_mainScreen = new FormLayout();
 		mainScreen.setLayout(fl_mainScreen);
+		
+		LFilter = new Label(navButtons, SWT.NONE);
+		LFilter.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				//FilterWindow filter = new FilterWindow(shell);
+			}
+		});
+		FormData fd_LFilter = new FormData();
+		fd_LFilter.top = new FormAttachment(4);
+		fd_LFilter.left = new FormAttachment(15);
+		fd_LFilter.bottom = new FormAttachment(34);
+		fd_LFilter.right = new FormAttachment(85);
+		LFilter.setLayoutData(fd_LFilter);
+		LFilter.setBackground(deepGrey);
+		
+		LInsert = new Label(navButtons, SWT.NONE);
+		FormData fd_LInsert = new FormData();
+		fd_LInsert.top = new FormAttachment(36);
+		fd_LInsert.left = new FormAttachment(15);
+		fd_LInsert.bottom = new FormAttachment(66);
+		fd_LInsert.right = new FormAttachment(85);
+		LInsert.setLayoutData(fd_LInsert);
+		LInsert.setBackground(darkGrey);
+		LInsert.addMouseListener(new MouseAdapter(){
+			public void mouseDown(MouseEvent e){
+				//AddShell form = new AddShell(keepModel, shlMarko,400,200);
+			}
+		});
+		
+		editor = new Label(navButtons, SWT.NONE);
+		editor.addMouseListener(new MouseAdapter(){
+			public void mouseDown(MouseEvent e){
+				LFilter.setVisible(!LFilter.getVisible());
+				LInsert.setVisible(!LInsert.getVisible());
+			}
+		});
+		
+		FormData fd_editor = new FormData();
+		fd_editor.top = new FormAttachment(68);
+		fd_editor.left = new FormAttachment(15);
+		fd_editor.bottom = new FormAttachment(98);
+		fd_editor.right = new FormAttachment(85);
+		editor.setLayoutData(fd_editor);
+		editor.setBackground(white);
 		
 		keepView = new TableProvider<KeeperController>(new KeeperContentProvider(), model, rightTable, SWT.FULL_SELECTION);
 		ColumnLabelProvider[] providers = new ColumnLabelProvider[]{
@@ -209,14 +273,10 @@ public class AppTester {
 		shell.setMenuBar(mainMenu);
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
-		
 		Composite filterWindow = FormDataObject.getFormedComposite(41, 15, 60, 99, mainScreen, SWT.NONE);
 		filterWindow.setLayout(new FormLayout());
-		
 		Text keyFilter = FormDataObject.getFormedControl(10, 6, 90, 11, Text.class, filterWindow, SWT.NONE);
-		
 		Text nameFilter = FormDataObject.getFormedControl(10, 14, 90, 19, Text.class, filterWindow, SWT.NONE);
-		
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
 				@Override

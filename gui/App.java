@@ -93,7 +93,7 @@ public class App {
 	protected void createContents() {
 		comparator = new TerritoryViewerComparator();
 		try {
-			model = new KeeperController("C:/users/fitisovdmtr/lab/config.xml");
+			model = new KeeperController("C:/Users/Yunicoed/Desktop/LW6/configd.xml");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
