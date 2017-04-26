@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,48 +18,48 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
+import functions.KeeperLoader;
+import kevents.*;
+import tevents.*;
+
 public class KeeperController {
 	Set<Note> collections;
 	private Path workPath;
+	private Path defaultPath;
 	private List<KeeperListener> keeperListeners;
-	public KeeperController(){
-		collections = new TreeSet<>();
-		keeperListeners = new ArrayList<>();
-		workPath = Paths.get("C:/users/fitisovdmtr/lab/config.xml");
-		SAXBuilder build = new SAXBuilder();
-		Document doc;
-		try {
-			File f = new File(workPath.toString());
-			f.setReadable(true);
-			doc = build.build(f);
-			Element root = doc.getRootElement();
-			List<Element> children = root.getChildren("path");
-			for(int i = 0; i<children.size();i++){
-				Note n = load(children.get(i).getAttributeValue("value"));
-				collections.add(n);
-			}
-		} catch (JDOMException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public KeeperController(String path) throws IOException{
+		init(path);
+	}
+	public KeeperController(String path, TerritoryListener ...listeners) throws IOException{
+		init(path, listeners);
 	}
 	void printNotes(){
 		collections.forEach((Note n)->{
 			System.out.println(n.getPath()+" - " + n.getKeep().getName() + ": "+ n.getKeep().getSize());
 		});
 	}
-	void loadKeeper(String p){
-		Path path = Paths.get(p);
-		File f = new File(p);
-		f.setReadable(true);
+	void loadKeeper(Set<Note> s, String p, TerritoryListener ...listeners){
+		KeeperLoader kL = new KeeperLoader(Paths.get(p),listeners);
+		Thread t = new Thread(kL);
+		t.setPriority(Thread.MAX_PRIORITY);
+		t.start();
+		if (kL.getStatus()) {
+			Note n = kL.getNote();
+			s.add(n);
+		}
+	}
+	void loadKeeper(String p, TerritoryListener ...listeners){
+		KeeperLoader kL = new KeeperLoader(Paths.get(p),listeners);
+		Thread t = new Thread(kL);
+		t.setPriority(Thread.MAX_PRIORITY);
+		t.start();
+		if (kL.getStatus()) {
+			Note n = kL.getNote();
+			collections.add(n);
+		}
 		try {
-			KeepModel km = new KeepModel(XMLParser.getStorage(f));
-			collections.add(new Note(path,km));
-		} catch (JDOMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+			t.join();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -103,7 +103,7 @@ public class KeeperController {
 		}
 		return keep;
 	}
-	void addKeeperListener(KeeperListener kl){
+	public void addKeeperListener(KeeperListener kl){
 		this.keeperListeners.add(kl);
 	}
 	
@@ -111,25 +111,25 @@ public class KeeperController {
 		this.keeperListeners.remove(kl);
 	}
 	
-	void keeperCreated(KeeperAddEvent addEv){
+	public void keeperCreated(KeeperAddEvent addEv){
 		keeperListeners.forEach((KeeperListener kl)->{
 			kl.keeperCreated(addEv);
 		});
 	}
 	
-	void keeperReaded(KeeperSelectionEvent selEv){
+	public void keeperReaded(KeeperSelectionEvent selEv){
 		keeperListeners.forEach((KeeperListener kl)->{
 			kl.keeperReaded(selEv);
 		});
 	}
 	
-	void keeperUpdated(KeeperRefreshEvent refEv){
+	public void keeperUpdated(KeeperRefreshEvent refEv){
 		keeperListeners.forEach((KeeperListener kl)->{
 			kl.keeperUpdated(refEv);
 		});
 	}
 	
-	void keeperDeleted(KeeperRemoveEvent remEv){
+	public void keeperDeleted(KeeperRemoveEvent remEv){
 		keeperListeners.forEach((KeeperListener kl)->{
 			kl.keeperDeleted(remEv);
 		});
@@ -184,21 +184,7 @@ public class KeeperController {
 		}
 	}
 	void addKeeper(String name){
-		collections.add(new Note(Paths.get(name), new KeepModel(new Keeper(name))));
-	}
-	List<List<String>> getStore(){
-		List<List<String>> outer = new ArrayList<>();
-		collections.forEach((Note n)->{
-			List<String> inner = new ArrayList<>();
-			inner.add(n.getKeep().getName());
-			inner.add(n.getKeep().getSize());
-			outer.add(inner);
-		});
-		return outer;
-	}
-	public Keeper getKeeper(int index){
-		if (index < collections.size()) return getElement(index).getKeep().getKeeper();
-		else return null;
+		collections.add(new Note(Paths.get(defaultPath.toString()+name+".xml"), new KeepModel(new Keeper(name))));
 	}
 	List<Note> getNStorage(){
 		List<Note> l = new ArrayList<Note>();
@@ -210,5 +196,64 @@ public class KeeperController {
 	}
 	public String showPath(Note n){
 		return n.getPath().toString();
+	}
+	
+	private void init(String path, TerritoryListener ...listeners) throws IOException {
+		collections = new TreeSet<>();
+		keeperListeners = new ArrayList<>();
+		workPath = Paths.get(path);
+		defaultPath = Paths.get("C:/users/fitisovdmtr/lab/collections/");
+		File f = new File(workPath.toString());
+		new File(workPath.getParent().toString()).mkdirs();
+		try {
+			if(!f.createNewFile()){
+				SAXBuilder build = new SAXBuilder();
+				Document doc;
+				f.setReadable(true);
+				doc = build.build(f);
+				Element root = doc.getRootElement();
+				List<Element> children = root.getChildren("path");
+				Set<Note> set = Collections.synchronizedSet(collections);
+				for(int i = 0; i<children.size();i++){
+					loadKeeper(set, children.get(i).getAttributeValue("value"),listeners);
+				}
+				collections = (TreeSet<Note>)set;
+			}else{
+				String s = "<?xml version=\"1.0\"?/>";
+				FileWriter fw = new FileWriter(f);
+				fw.write(s);
+				fw.close();
+			}
+		} catch (JDOMException e) {
+			String s = "<?xml version=\"1.0\"?/>";
+			FileWriter fw = new FileWriter(f);
+			fw.write(s);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args){
+		try {
+			TerritoryListener tmp = new TerritoryListener(){
+
+				@Override
+				public void territoryCreated(TerritoryAddEvent tae) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void territoryRemoved(TerritoryRemoveEvent tre) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			};
+			KeeperController kc = new KeeperController("C:/users/fitisovdmtr/lab/config.xml", tmp);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

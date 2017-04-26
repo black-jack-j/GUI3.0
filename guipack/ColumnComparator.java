@@ -8,7 +8,6 @@ abstract class ColumnComparator extends ViewerComparator{
 	private final int DECENTED = 1;
 	protected int order;
 	ColumnComparator(){
-		System.out.println("yeap");
 		order = DECENTED;
 	}
 	public void setColumn(int colIndex){

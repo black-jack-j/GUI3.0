@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import tevents.*;
+
 public class KeepModel{
 	private List<TerritoryListener> territoryListeners;
 	private Keeper keep;
@@ -34,28 +36,34 @@ public class KeepModel{
 		return outer;
 	}
 	
-	void addTerritoryListener(TerritoryListener tl){
+	public void addTerritoryListener(TerritoryListener tl){
 		this.territoryListeners.add(tl);
 	}
-	void removeTerritoryListeners(TerritoryListener tl){
+	public void AddTerritoryListener(TerritoryListener...listeners){
+		for(TerritoryListener tl:listeners) addTerritoryListener(tl);
+	}
+	public void AddTerritoryListener(List<TerritoryListener> listeners){
+		listeners.forEach((TerritoryListener tl)->addTerritoryListener(tl));
+	}
+	public void removeTerritoryListeners(TerritoryListener tl){
 		this.territoryListeners.remove(tl);
 	}
-	void territoryCreated(TerritoryAddEvent tae){
+	public void territoryCreated(TerritoryAddEvent tae){
 		this.territoryListeners.forEach((TerritoryListener tl)->tl.territoryCreated(tae));
 	}
-	void territoryRemoved(TerritoryRemoveEvent tre){
+	public void territoryRemoved(TerritoryRemoveEvent tre){
 		this.territoryListeners.forEach((TerritoryListener tl)->tl.territoryRemoved(tre));
 	}
-	Keeper getKeeper(){
+	public Keeper getKeeper(){
 		return keep;
 	}
-	void removeTerritory(String key){
+	public void removeTerritory(String key){
 		keep.removeComponent(key);
 	}
-	void removeLower(String key){
+	public void removeLower(String key){
 		keep.removeLower(keep.getComponent(key));
 	}
-	Map<String, Territory> getTerr(){
+	public Map<String, Territory> getTerr(){
 		return this.keep.getCollection();
 	}
 

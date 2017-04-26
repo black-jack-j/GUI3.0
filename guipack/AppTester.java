@@ -1,19 +1,25 @@
 package guipack;
 
-import java.nio.file.Paths;
+import kevents.*;
+import tevents.TerritoryAddEvent;
+import tevents.TerritoryListener;
+import tevents.TerritoryRemoveEvent;
+
+import java.io.IOException;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
 
+import filterpack.KeeperFilter;
 import gui.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
@@ -21,12 +27,14 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 
 public class AppTester {
 	private TableProvider<KeeperController> keepView;
 	private TableProvider<Note> territoryView;
 	private KeeperController model;
-	private Note keepModel;
+	private Point minSize;
 	protected Shell shell;
 	/**
 	 * Launch the application.
@@ -60,33 +68,118 @@ public class AppTester {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
-		model = new KeeperController();
-		keepModel = new Note(Paths.get(""),new KeepModel(new Keeper("")));
+		try {
+			TerritoryListener tmp = new TerritoryListener(){
+
+				@Override
+				public void territoryCreated(TerritoryAddEvent tae) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void territoryRemoved(TerritoryRemoveEvent tre) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			};
+			model = new KeeperController("C:/users/fitisovdmtr/lab/config.xml", tmp);
+		} catch (IOException e) {
+			System.out.println("failed to connect to config file");
+			e.printStackTrace();
+		}
+		model.addKeeperListener(new KeeperListener(){
+
+			@Override
+			public void keeperCreated(KeeperAddEvent kae) {
+				
+			}
+
+			@Override
+			public void keeperReaded(KeeperSelectionEvent kse) {
+				territoryView.getViewer().setInput(kse.getNote());
+				territoryView.getViewer().refresh();
+				keepView.getViewer().refresh();
+			}
+
+			@Override
+			public void keeperUpdated(KeeperRefreshEvent kre) {
+				
+			}
+
+			@Override
+			public void keeperDeleted(KeeperRemoveEvent kre) {
+				
+			}
+			
+		});
 		shell = new Shell();
-		shell.setMinimumSize(new Point(1101, 775));
-		shell.setSize(1101, 775);
-		shell.setText("SWT Application");
 		
 		Composite mainScreen = new Composite(shell, SWT.NONE);
-		mainScreen.setLayout(new FormLayout());
-		
 		Composite leftTable = new Composite(mainScreen, SWT.NONE);
-		leftTable.setLayout(new FormLayout());
-		FormData fd_leftTable = new FormData();
-		fd_leftTable.height = 560;
-		fd_leftTable.width = 464;
-		fd_leftTable.top = new FormAttachment(0, 119);
-		fd_leftTable.left = new FormAttachment(0, 20);
-		leftTable.setLayoutData(fd_leftTable);
-		
 		Composite rightTable = new Composite(mainScreen, SWT.NONE);
+		
+		shell.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				if(shell.getSize().x <= minSize.x & shell.getSize().y >= minSize.y){
+					FormData fd = new FormData();
+					fd.top = new FormAttachment(1);
+					fd.left = new FormAttachment(1);
+					fd.right = new FormAttachment(99);
+					fd.bottom = new FormAttachment(14);
+					rightTable.setLayoutData(fd);
+					
+					FormData tmp = new FormData();
+					tmp.top = new FormAttachment(15);
+					tmp.left = new FormAttachment(1);
+					tmp.right = new FormAttachment(99);
+					tmp.bottom = new FormAttachment(99);
+					leftTable.setLayoutData(tmp);
+				}else{
+					FormData fd_rightTable = new FormData();
+					fd_rightTable.bottom = new FormAttachment(99);
+					fd_rightTable.right = new FormAttachment(99);
+					fd_rightTable.top = new FormAttachment(15);
+					fd_rightTable.left = new FormAttachment(61);
+					rightTable.setLayoutData(fd_rightTable);
+					
+					FormData fd_leftTable = new FormData();
+					fd_leftTable.top = new FormAttachment(15);
+					fd_leftTable.left = new FormAttachment(1);
+					fd_leftTable.right = new FormAttachment(60);
+					fd_leftTable.bottom = new FormAttachment(99);
+					leftTable.setLayoutData(fd_leftTable);
+					
+				}
+			}
+		});
+		shell.setMinimumSize(new Point(640, 480));
+		minSize = shell.getMinimumSize();
+		minSize.y = 720;
+		shell.setSize(640, 480);
+		shell.setText("SWT Application");
+		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		
+		FormLayout fl_mainScreen = new FormLayout();
+		mainScreen.setLayout(fl_mainScreen);
+		
+		FormData fd_leftTable = new FormData();
+		fd_leftTable.top = new FormAttachment(15);
+		fd_leftTable.left = new FormAttachment(1);
+		fd_leftTable.right = new FormAttachment(60);
+		leftTable.setLayoutData(fd_leftTable);
+		leftTable.setLayoutData(fd_leftTable);
+		leftTable.setLayout(new FormLayout());
+		
+		rightTable.setLayout(new FormLayout());
 		FormData fd_rightTable = new FormData();
-		fd_rightTable.height = 560;
-		fd_rightTable.width = 306;
-		fd_rightTable.left = new FormAttachment(100, -332);
-		fd_rightTable.bottom = new FormAttachment(leftTable, 0, SWT.BOTTOM);
-		fd_rightTable.right = new FormAttachment(100, -20);
-		fd_rightTable.top = new FormAttachment(0, 119);
+		fd_rightTable.bottom = new FormAttachment(99);
+		fd_rightTable.right = new FormAttachment(99);
+		fd_rightTable.top = new FormAttachment(15);
+		fd_rightTable.left = new FormAttachment(61);
 		rightTable.setLayoutData(fd_rightTable);
 		
 		keepView = new TableProvider<KeeperController>(new KeeperContentProvider(), model, rightTable, SWT.FULL_SELECTION);
@@ -104,36 +197,25 @@ public class AppTester {
 					}
 				}
 		};
-		keepView.addColumns(new String[]{"name", "size"},providers, 153, 153);
-		Table tableK = keepView.getTable();
-		keepView.getViewer().refresh();
 		
-		FormData fd_right = new FormData();
-		fd_right.width = fd_rightTable.width;
-		fd_right.height = fd_rightTable.height - 32;
-		fd_right.left = new FormAttachment(0,0);
-		fd_right.top = new FormAttachment(0,32);
+		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 94);
 		
-		tableK.setLayoutData(fd_right);
-		
-		tableK.addSelectionListener(new SelectionAdapter(){
+		keepView.getTable().addSelectionListener(new SelectionAdapter(){
 			
 			@Override
 			public void widgetSelected(SelectionEvent se){
 				IStructuredSelection s = keepView.getViewer().getStructuredSelection();
 				Note n = (Note)s.getFirstElement();
-				System.out.println(n.getKeep().getName());
+				KeeperSelectionEvent kse = new KeeperSelectionEvent(se, n);
+				model.keeperReaded(kse);
 			}
 		});
-		
-		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		
 		Menu mainMenu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(mainMenu);
 		
-		territoryView = new TableProvider<Note>(new KeepContentProvider(),keepModel,leftTable, SWT.FULL_SELECTION);
-		
+		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
 				@Override
@@ -157,15 +239,11 @@ public class AppTester {
 				}
 			}
 		};
-		territoryView.addColumns(new KeeperColumn(), providers, new String[]{"key, name, square"}, 153, 153, 153);
-		Table tableT = territoryView.getTable();
-		tableT.setHeaderVisible(true);
-		tableT.setLinesVisible(true);
-		FormData fd = new FormData();
-		fd.width = 464;
-		fd.height = 528;
-		fd.left = new FormAttachment(0,0);
-		fd.top = new FormAttachment(0,32);
-		tableT.setLayoutData(fd);
+		
+		territoryView.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
+		territoryView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
+		keepView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
+		keepView.addSearch(new KeeperFilter());
+		keepView.getViewer().refresh();
 	}
 }

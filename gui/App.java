@@ -3,6 +3,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import java.io.IOException;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
@@ -19,6 +20,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import kevents.*;
 
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -89,7 +92,12 @@ public class App {
 	 */
 	protected void createContents() {
 		comparator = new TerritoryViewerComparator();
-		model = new KeeperController();
+		try {
+			model = new KeeperController("C:/users/fitisovdmtr/lab/config.xml");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		model.addKeeperListener(new KeeperListener(){
 
 			@Override

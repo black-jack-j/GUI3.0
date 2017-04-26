@@ -6,6 +6,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
+import kevents.*;
+
 public class KeeperInc {
 	private Text FName;
 	private KeeperController control;

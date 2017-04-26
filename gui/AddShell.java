@@ -2,20 +2,17 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import tevents.TerritoryAddEvent;
+
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ModifyEvent;
 
