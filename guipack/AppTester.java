@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -25,12 +26,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.browser.Browser;
 
 public class AppTester {
@@ -121,8 +124,8 @@ public class AppTester {
 		shell = new Shell();
 		
 		Composite mainScreen = new Composite(shell, SWT.NONE);
-		Composite leftTable = FormDataObject.getFormedComposite(1,15,40,99, mainScreen, SWT.NONE);
-		Composite rightTable = FormDataObject.getFormedComposite(61,15,99,99, mainScreen, SWT.NONE);
+		Composite leftTable = FormDataObject.getFormedComposite(1,15,40,99, Composite.class, mainScreen, SWT.NONE);
+		Composite rightTable = FormDataObject.getFormedComposite(61,15,99,99, Composite.class, mainScreen, SWT.NONE);
 		
 		leftTable.setLayout(new FormLayout());
 		rightTable.setLayout(new FormLayout());
@@ -210,12 +213,25 @@ public class AppTester {
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
 		
-		Composite filterWindow = FormDataObject.getFormedComposite(41, 15, 60, 99, mainScreen, SWT.NONE);
+		Composite filterWindow = FormDataObject.getFormedComposite(41, 15, 60, 99, Composite.class, mainScreen, SWT.NONE);
 		filterWindow.setLayout(new FormLayout());
 		
-		Text keyFilter = FormDataObject.getFormedControl(10, 6, 90, 11, Text.class, filterWindow, SWT.NONE);
+		Composite filterHeader = FormDataObject.getFormedComposite(0, 0, 100, 6, Composite.class, filterWindow, SWT.NONE);
 		
-		Text nameFilter = FormDataObject.getFormedControl(10, 14, 90, 19, Text.class, filterWindow, SWT.NONE);
+		filterHeader.setBackground(new Color(Display.getCurrent(),142,0,0));
+		
+		Text keyFilter = FormDataObject.getFormedControl(10, new FormAttachment(filterHeader,6), 90, 15, Text.class, filterWindow, SWT.NONE);
+		
+		Text nameFilter = FormDataObject.getFormedControl(10, 15, 90, 20, Text.class, filterWindow, SWT.NONE);
+		
+		Group sizeCom = FormDataObject.getFormedComposite(10, 21, 90, 31, Group.class, filterWindow, SWT.NONE);
+		sizeCom.setLayout(new FormLayout());
+		
+		Scale scaleFilter = FormDataObject.getFormedControl(0, 0, 100, 40, Scale.class, sizeCom, SWT.NONE);
+		
+		Button ascendOrder = FormDataObject.getFormedControl(0, 50, 50, 100, Button.class, sizeCom, SWT.TOGGLE);
+		
+		Button descendOrder = FormDataObject.getFormedControl(50, 50, 100, 100, Button.class, sizeCom, SWT.TOGGLE);
 		
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
