@@ -22,16 +22,15 @@ import filterpack.KeeperFilter;
 import gui.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.browser.Browser;
@@ -220,19 +219,41 @@ public class AppTester {
 		
 		filterHeader.setBackground(new Color(Display.getCurrent(),142,0,0));
 		
-		Text keyFilter = FormDataObject.getFormedControl(10, new FormAttachment(filterHeader,6), 90, 15, Text.class, filterWindow, SWT.NONE);
+		Text keyFilter = FormDataObject.getFormedControl(35, 11, 85, 15, Text.class, filterWindow, SWT.NONE);
 		
-		Text nameFilter = FormDataObject.getFormedControl(10, 15, 90, 20, Text.class, filterWindow, SWT.NONE);
+		Text nameFilter = FormDataObject.getFormedControl(35, 16, 85, 20, Text.class, filterWindow, SWT.NONE);
 		
-		Group sizeCom = FormDataObject.getFormedComposite(10, 21, 90, 31, Group.class, filterWindow, SWT.NONE);
-		sizeCom.setLayout(new FormLayout());
+		Text sizeFilter = FormDataObject.getFormedControl(35, 21, 85, 25, Text.class, filterWindow, SWT.TOGGLE);
 		
-		Scale scaleFilter = FormDataObject.getFormedControl(0, 0, 100, 40, Scale.class, sizeCom, SWT.NONE);
 		
-		Button ascendOrder = FormDataObject.getFormedControl(0, 50, 50, 100, Button.class, sizeCom, SWT.TOGGLE);
+		keyFilter.addModifyListener(new ModifyListener(){
+			
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				
+			}
+			
+		});
 		
-		Button descendOrder = FormDataObject.getFormedControl(50, 50, 100, 100, Button.class, sizeCom, SWT.TOGGLE);
+		nameFilter.addModifyListener(new ModifyListener(){
+
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		
+		sizeFilter.addModifyListener(new ModifyListener(){
+
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
 				@Override

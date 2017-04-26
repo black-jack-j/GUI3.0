@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,45 +49,6 @@ public class KeeperController {
 		Thread t = new Thread(kL);
 		t.setPriority(Thread.MAX_PRIORITY);
 		t.start();
-	}
-	private Note load(String p){
-		Note keep = null;
-		try {
-			Note tmp;
-			File f = new File(p);
-			f.setReadable(true);
-			Keeper k = XMLParser.getStorage(f);
-			tmp = new Note(Paths.get(p),new KeepModel(k));
-			tmp.getKeep().addTerritoryListener(new TerritoryListener(){
-
-				@Override
-				public void territoryCreated(TerritoryAddEvent tae) {
-					keeperUpdated(new KeeperRefreshEvent(tae));
-				}
-
-				@Override
-				public void territoryRemoved(TerritoryRemoveEvent tre) {
-					switch(tre.m){
-					case remove:{
-						tmp.getKeep().removeTerritory(tre.getKey());
-						break;
-					}
-					case removeLower:{
-						tmp.getKeep().removeLower(tre.getKey());
-					}
-					default:break;
-					}
-					//keeperReaded(new KeeperSelectionEvent(tre,view.indexOf(keep)));
-				}
-				
-			});
-			keep = tmp;
-		} catch (JDOMException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return keep;
 	}
 	public void addKeeperListener(KeeperListener kl){
 		this.keeperListeners.add(kl);
