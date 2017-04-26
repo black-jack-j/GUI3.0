@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -33,6 +34,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -106,7 +108,7 @@ public class AppTester {
 				}
 				
 			};
-			model = new KeeperController("C:/Users/Yunicoed/Desktop/LW6/config.xml", tmp);
+			model = new KeeperController("C:/Users/Yunicoed/Desktop/LW6/data/config.xml", tmp);
 		} catch (IOException e) {
 			System.out.println("failed to connect to config file");
 			e.printStackTrace();
@@ -115,7 +117,18 @@ public class AppTester {
 
 			@Override
 			public void keeperCreated(KeeperAddEvent kae) {
-				
+				switch(kae.m){
+				case create:{
+					model.addKeeper(kae.getMessage());
+					break;
+				}
+				case load:{
+					model.loadKeeper(kae.getMessage());
+					break;
+				}
+				default: break;
+			}
+			keepView.getViewer().refresh();
 			}
 
 			@Override
@@ -145,7 +158,7 @@ public class AppTester {
 		leftTable.setLayout(new FormLayout());
 		rightTable.setLayout(new FormLayout());
 		navButtons.setLayout(new FormLayout());
-		
+				
 		shell.setMinimumSize(new Point(640, 480));
 		minSize = shell.getMinimumSize();
 		minSize.y = 720;
@@ -190,32 +203,19 @@ public class AppTester {
 		shell.setText("SWT Application");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		
 		FormLayout fl_mainScreen = new FormLayout();
 		mainScreen.setLayout(fl_mainScreen);
-		
-		LFilter = new Label(navButtons, SWT.NONE);
+
+		LFilter = FormDataObject.getFormedControl(15, 4, 85, 34, Label.class, navButtons, SWT.NONE);
+		LFilter.setBackground(deepGrey);
 		LFilter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				//FilterWindow filter = new FilterWindow(shell);
 			}
 		});
-		FormData fd_LFilter = new FormData();
-		fd_LFilter.top = new FormAttachment(4);
-		fd_LFilter.left = new FormAttachment(15);
-		fd_LFilter.bottom = new FormAttachment(34);
-		fd_LFilter.right = new FormAttachment(85);
-		LFilter.setLayoutData(fd_LFilter);
-		LFilter.setBackground(deepGrey);
 		
-		LInsert = new Label(navButtons, SWT.NONE);
-		FormData fd_LInsert = new FormData();
-		fd_LInsert.top = new FormAttachment(36);
-		fd_LInsert.left = new FormAttachment(15);
-		fd_LInsert.bottom = new FormAttachment(66);
-		fd_LInsert.right = new FormAttachment(85);
-		LInsert.setLayoutData(fd_LInsert);
+		LInsert = FormDataObject.getFormedControl(15, 36, 85, 66, Label.class, navButtons, SWT.NONE);
 		LInsert.setBackground(darkGrey);
 		LInsert.addMouseListener(new MouseAdapter(){
 			public void mouseDown(MouseEvent e){
@@ -271,6 +271,46 @@ public class AppTester {
 		
 		Menu mainMenu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(mainMenu);
+		
+		MenuItem menuCollection = new MenuItem(mainMenu, SWT.CASCADE);
+		menuCollection.setText("File");
+		
+		Menu menu_1 = new Menu(menuCollection);
+		menuCollection.setMenu(menu_1);
+		
+		MenuItem mNew = new MenuItem(menu_1, SWT.NONE);
+		mNew.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				KeeperInc tmp = new KeeperInc(shell, model);
+			}
+		});
+		mNew.setText("Create new map");
+		
+		MenuItem mLoad = new MenuItem(menu_1, SWT.NONE);
+		mLoad.setText("Load map");
+		mLoad.addSelectionListener(new SelectionAdapter(){
+			
+			public void widgetSelected(SelectionEvent se){
+				FileDialog f = new FileDialog(shell);
+				f.setFilterExtensions(new String[]{"*.xml"});
+				f.open();
+				if (!f.getFileName().isEmpty()){
+					String s = f.getFilterPath()+"\\"+f.getFileName();
+					KeeperAddEvent kae = new KeeperAddEvent(se,s);
+					kae.m = KeeperAddEvent.Mode.load;
+					model.keeperCreated(kae);
+				}
+			}
+		});
+		
+		MenuItem mExit = new MenuItem(menu_1, SWT.NONE);
+		mExit.setText("Exit");
+		mExit.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				shell.dispose();
+			}
+		});
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
 		Composite filterWindow = FormDataObject.getFormedComposite(41, 15, 60, 99, mainScreen, SWT.NONE);

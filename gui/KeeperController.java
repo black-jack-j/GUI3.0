@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,7 +44,7 @@ public class KeeperController {
 			t.setPriority(Thread.MAX_PRIORITY);
 			t.start();
 	}
-	void loadKeeper(String p, TerritoryListener ...listeners){
+	public void loadKeeper(String p, TerritoryListener ...listeners){
 		KeeperLoader kL = new KeeperLoader(collections, Paths.get(p),listeners);
 		Thread t = new Thread(kL);
 		t.setPriority(Thread.MAX_PRIORITY);
@@ -187,7 +186,7 @@ public class KeeperController {
 		});
 		t.start();
 	}
-	void addKeeper(String name){
+	public void addKeeper(String name){
 		collections.add(new Note(Paths.get(defaultPath.toString()+name+".xml"), new KeepModel(new Keeper(name))));
 	}
 	List<Note> getNStorage(){
