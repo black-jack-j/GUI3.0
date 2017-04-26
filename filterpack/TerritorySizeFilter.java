@@ -10,11 +10,8 @@ import gui.Territory;
 public class TerritorySizeFilter extends ViewerFilter{
 	private double searchSize;
 	private boolean isGreater;
-	private boolean notEnabled;
-	TerritorySizeFilter(double measure){
+	public TerritorySizeFilter(){
 		isGreater = true;
-		searchSize = measure;
-		notEnabled = true;
 	}
 	
 	public void setDescending(){
@@ -25,20 +22,22 @@ public class TerritorySizeFilter extends ViewerFilter{
 		isGreater = false;
 	}
 	
-	public void setMeasure(double s){
-		searchSize = s;
+	public void setMeasure(String s){
+		try{
+			double d = Double.parseDouble(s);
+			searchSize = d;
+		}catch(NumberFormatException e){
+			return;
+		}
 	}
 	
-	public void setEnabled(){
-		notEnabled = !notEnabled;
-	}
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		Entry<String,Territory> entry = (Entry<String,Territory>)element;
 		boolean b = entry.getValue().getSquare() > searchSize;
-		if (isGreater) return notEnabled||b;
-		else return notEnabled||!b;
+		if (isGreater) return b;
+		else return !b;
 	}
 
 }

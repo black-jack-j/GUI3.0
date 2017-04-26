@@ -14,11 +14,13 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import filterpack.KeeperFilter;
+import filterpack.TerritoryKeyFilter;
+import filterpack.TerritoryNameFilter;
+import filterpack.TerritorySizeFilter;
 import gui.*;
 
 import org.eclipse.swt.SWT;
@@ -32,8 +34,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 public class AppTester {
 	private TableProvider<KeeperController> keepView;
@@ -212,48 +216,60 @@ public class AppTester {
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
 		
-		Composite filterWindow = FormDataObject.getFormedComposite(41, 15, 60, 99, Composite.class, mainScreen, SWT.NONE);
+		Composite filterWindow = FormDataObject.getFormedComposite(41, 15, 60, 45, Composite.class, mainScreen, SWT.NONE);
 		filterWindow.setLayout(new FormLayout());
 		
-		Composite filterHeader = FormDataObject.getFormedComposite(0, 0, 100, 6, Composite.class, filterWindow, SWT.NONE);
+		filterWindow.setBackground(new Color(Display.getCurrent(), 107, 98, 64));
+		
+		Composite filterHeader = FormDataObject.getFormedComposite(0, 0, 100, 17, Composite.class, filterWindow, SWT.NONE);
 		
 		filterHeader.setBackground(new Color(Display.getCurrent(),142,0,0));
 		
-		Text keyFilter = FormDataObject.getFormedControl(35, 11, 85, 15, Text.class, filterWindow, SWT.NONE);
+		Text keyFilter = FormDataObject.getFormedControl(35, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		
-		Text nameFilter = FormDataObject.getFormedControl(35, 16, 85, 20, Text.class, filterWindow, SWT.NONE);
+		Text nameFilter = FormDataObject.getFormedControl(35, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
 		
-		Text sizeFilter = FormDataObject.getFormedControl(35, 21, 85, 25, Text.class, filterWindow, SWT.TOGGLE);
+		Text sizeFilter = FormDataObject.getFormedControl(35, 50, 85, 63, Text.class, filterWindow, SWT.TOGGLE);
 		
+		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
+		TerritoryNameFilter tnf = new TerritoryNameFilter();
+		TerritorySizeFilter tsf = new TerritorySizeFilter();
 		
 		keyFilter.addModifyListener(new ModifyListener(){
-			
+
 			@Override
 			public void modifyText(ModifyEvent arg0) {
-				
+				tkf.setSearch(keyFilter.getText());
+				territoryView.getViewer().refresh();
+				System.out.println("yeap");
 			}
 			
-		});
+		});		
+		territoryView.getViewer().addFilter(tkf);
 		
 		nameFilter.addModifyListener(new ModifyListener(){
 
 			@Override
 			public void modifyText(ModifyEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				tnf.setSearch(nameFilter.getText());
+				territoryView.getViewer().refresh();
 			}
 			
-		});
+		});	
+		territoryView.getViewer().addFilter(tnf);
 		
 		sizeFilter.addModifyListener(new ModifyListener(){
 
 			@Override
 			public void modifyText(ModifyEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				tsf.setMeasure(sizeFilter.getText());
+				territoryView.getViewer().refresh();
 			}
 			
-		});
+		});	
+		
+		territoryView.getViewer().addFilter(tsf);
+		
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
 				@Override
