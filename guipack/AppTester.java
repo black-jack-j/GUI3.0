@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -229,7 +230,9 @@ public class AppTester {
 		
 		Text nameFilter = FormDataObject.getFormedControl(35, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
 		
-		Text sizeFilter = FormDataObject.getFormedControl(35, 50, 85, 63, Text.class, filterWindow, SWT.TOGGLE);
+		Text sizeFilter = FormDataObject.getFormedControl(35, 50, 85, 63, Text.class, filterWindow, SWT.NONE);
+		
+		Group orderGroup = FormDataObject.getFormedComposite(35, 65, 85, 70, Group.class, filterWindow, SWT.NONE);
 		
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
 		TerritoryNameFilter tnf = new TerritoryNameFilter();
