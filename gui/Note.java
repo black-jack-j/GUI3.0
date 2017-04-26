@@ -26,7 +26,7 @@ public class Note implements Comparable<Note>{
 	}
 	@Override
 	public int compareTo(Note arg0) {
-		return keep.getKeeper().getSize()-arg0.getKeep().getKeeper().getSize();
+		return path.compareTo(arg0.getPath());
 	}
 	public void save(){
 		File f = new File(path.toString());

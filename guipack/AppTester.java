@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -29,6 +31,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.browser.Browser;
 
 public class AppTester {
 	private TableProvider<KeeperController> keepView;
@@ -62,6 +65,7 @@ public class AppTester {
 				display.sleep();
 			}
 		}
+		model.close();
 	}
 
 	/**
@@ -120,6 +124,11 @@ public class AppTester {
 		Composite leftTable = new Composite(mainScreen, SWT.NONE);
 		Composite rightTable = new Composite(mainScreen, SWT.NONE);
 		
+		shell.setMinimumSize(new Point(640, 480));
+		minSize = shell.getMinimumSize();
+		minSize.y = 720;
+		shell.setSize(640, 480);
+		
 		shell.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
@@ -128,15 +137,16 @@ public class AppTester {
 					fd.top = new FormAttachment(1);
 					fd.left = new FormAttachment(1);
 					fd.right = new FormAttachment(99);
-					fd.bottom = new FormAttachment(14);
+					fd.bottom = new FormAttachment(19);
 					rightTable.setLayoutData(fd);
 					
 					FormData tmp = new FormData();
-					tmp.top = new FormAttachment(15);
+					tmp.top = new FormAttachment(20);
 					tmp.left = new FormAttachment(1);
 					tmp.right = new FormAttachment(99);
 					tmp.bottom = new FormAttachment(99);
 					leftTable.setLayoutData(tmp);
+					
 				}else{
 					FormData fd_rightTable = new FormData();
 					fd_rightTable.bottom = new FormAttachment(99);
@@ -155,10 +165,6 @@ public class AppTester {
 				}
 			}
 		});
-		shell.setMinimumSize(new Point(640, 480));
-		minSize = shell.getMinimumSize();
-		minSize.y = 720;
-		shell.setSize(640, 480);
 		shell.setText("SWT Application");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
@@ -242,8 +248,25 @@ public class AppTester {
 		
 		territoryView.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
 		territoryView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
-		keepView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
-		keepView.addSearch(new KeeperFilter());
+		keepView.getHeader().setBackground(new Color(Display.getCurrent(),103,157,246));
+		keepView.setSize(100,94).addSearch(new KeeperFilter());
+		keepView.getViewer().addDoubleClickListener(new IDoubleClickListener(){
+
+			@Override
+			public void doubleClick(DoubleClickEvent arg0) {
+				IStructuredSelection s = (IStructuredSelection) arg0.getSelection();
+				Shell browser = new Shell(SWT.DIALOG_TRIM  & (~SWT.RESIZE));
+				browser.setLayout(new FillLayout());
+				Browser bros = new Browser(browser,SWT.NONE);
+				if(!s.isEmpty()) {
+					bros.setUrl("http://maps.google.com/?q="+((Note)s.getFirstElement()).getKeep().getName());
+					browser.setSize(640, 480);
+					browser.open();
+					bros.refresh();
+				}
+			}
+			
+		});
 		keepView.getViewer().refresh();
 	}
 }

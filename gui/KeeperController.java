@@ -19,6 +19,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import functions.KeeperLoader;
+import functions.KeeperSaver;
 import kevents.*;
 import tevents.*;
 
@@ -39,30 +40,16 @@ public class KeeperController {
 		});
 	}
 	void loadKeeper(Set<Note> s, String p, TerritoryListener ...listeners){
-		KeeperLoader kL = new KeeperLoader(Paths.get(p),listeners);
-		Thread t = new Thread(kL);
-		t.setPriority(Thread.MAX_PRIORITY);
-		t.start();
-		if (kL.getStatus()) {
-			Note n = kL.getNote();
-			s.add(n);
-		}
+			KeeperLoader kL = new KeeperLoader(collections, Paths.get(p),listeners);
+			Thread t = new Thread(kL);
+			t.setPriority(Thread.MAX_PRIORITY);
+			t.start();
 	}
 	void loadKeeper(String p, TerritoryListener ...listeners){
-		KeeperLoader kL = new KeeperLoader(Paths.get(p),listeners);
+		KeeperLoader kL = new KeeperLoader(collections, Paths.get(p),listeners);
 		Thread t = new Thread(kL);
 		t.setPriority(Thread.MAX_PRIORITY);
 		t.start();
-		if (kL.getStatus()) {
-			Note n = kL.getNote();
-			collections.add(n);
-		}
-		try {
-			t.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	private Note load(String p){
 		Note keep = null;
@@ -159,29 +146,46 @@ public class KeeperController {
 	void removeNote(Note n){
 		collections.remove(n);
 	}
-	void close(){
-		collections.forEach((Note n)->n.save());
-		File f = new File(workPath.toString());
-		Element rootElement = new Element("files");
-		collections.forEach((Note p)->{
-			Element el = new Element("path");
-			el.setAttribute("value", p.getPath().toString());
-			rootElement.addContent(el);
+	public void close(){
+		collections.forEach((Note n)->{
+			KeeperSaver ks = new KeeperSaver(n);
+			Thread t = new Thread(ks);
+			t.start();
 		});
-		try {
-			f.createNewFile();
-			f.setWritable(true);
-			FileWriter fw = new FileWriter(f);
-			Document doc = new Document();
-			doc.setRootElement(rootElement);
-			Format frmt = Format.getPrettyFormat();
-			frmt.setEncoding("cp1251");
-			XMLOutputter xml = new XMLOutputter();
-			xml.output(doc, fw);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Thread t = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				File f = new File(workPath.toString());
+				Element rootElement = new Element("files");
+				synchronized(collections){
+					collections.forEach((Note p)->{
+						Element el = new Element("path");
+						el.setAttribute("value", p.getPath().toString());
+						rootElement.addContent(el);
+					});
+				}
+				synchronized(f){
+					try {
+						f.createNewFile();
+						f.setWritable(true);
+						FileWriter fw = new FileWriter(f);
+						Document doc = new Document();
+						doc.setRootElement(rootElement);
+						Format frmt = Format.getPrettyFormat();
+						frmt.setEncoding("cp1251");
+						XMLOutputter xml = new XMLOutputter();
+						xml.output(doc, fw);
+						System.out.println("All clear");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		});
+		t.start();
 	}
 	void addKeeper(String name){
 		collections.add(new Note(Paths.get(defaultPath.toString()+name+".xml"), new KeepModel(new Keeper(name))));
@@ -213,11 +217,9 @@ public class KeeperController {
 				doc = build.build(f);
 				Element root = doc.getRootElement();
 				List<Element> children = root.getChildren("path");
-				Set<Note> set = Collections.synchronizedSet(collections);
 				for(int i = 0; i<children.size();i++){
-					loadKeeper(set, children.get(i).getAttributeValue("value"),listeners);
+					loadKeeper(collections, children.get(i).getAttributeValue("value"),listeners);
 				}
-				collections = (TreeSet<Note>)set;
 			}else{
 				String s = "<?xml version=\"1.0\"?/>";
 				FileWriter fw = new FileWriter(f);
@@ -230,29 +232,6 @@ public class KeeperController {
 			fw.write(s);
 			fw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public static void main(String[] args){
-		try {
-			TerritoryListener tmp = new TerritoryListener(){
-
-				@Override
-				public void territoryCreated(TerritoryAddEvent tae) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void territoryRemoved(TerritoryRemoveEvent tre) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-			};
-			KeeperController kc = new KeeperController("C:/users/fitisovdmtr/lab/config.xml", tmp);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

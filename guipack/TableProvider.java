@@ -14,10 +14,12 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import filterpack.CustomFilter;
@@ -111,7 +113,7 @@ public class TableProvider<T> {
 		return this;
 	}
 	
-	public void setSize(int widthP, int heightP){
+	public TableProvider<T> setSize(int widthP, int heightP){
 		FormData fd = new FormData();
 		fd.left = new FormAttachment(0);
 		fd.right = new FormAttachment(widthP);
@@ -124,16 +126,26 @@ public class TableProvider<T> {
 		tmp.left = new FormAttachment(0);
 		tmp.right = new FormAttachment(100);
 		table.setLayoutData(tmp);
+		return this;
 	}
 	
 	public <F extends CustomFilter> void addSearch(F f){
-		Text search = new Text(header,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
+		Composite border = new Composite(header,SWT.NONE);
+		border.setLayout(new FormLayout());
+		Text search = new Text(border,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
 		FormData s = new FormData();
-		s.left = new FormAttachment(70);
+		s.left = new FormAttachment(69);
 		s.right = new FormAttachment(99);
-		s.top = new FormAttachment(10);
+		s.top = new FormAttachment(9);
 		s.bottom = new FormAttachment(90);
-		search.setLayoutData(s);
+		border.setLayoutData(s);
+		FormData s2 = new FormData();
+		s2.left = new FormAttachment(1);
+		s2.right = new FormAttachment(99);
+		s2.top = new FormAttachment(5);
+		s2.bottom = new FormAttachment(95);
+		border.setBackground(new Color(Display.getCurrent(), 121,121,121));
+		search.setLayoutData(s2);
 		search.addModifyListener(new ModifyListener(){
 
 			@Override
