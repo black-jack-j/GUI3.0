@@ -9,6 +9,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 import kevents.*;
 
@@ -38,9 +40,9 @@ public class KeeperInc {
 		});
 		
 		Button BOk = new Button(window, SWT.NONE);
-		BOk.addMouseListener(new MouseAdapter() {
+		BOk.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				if (FName.getText().trim().isEmpty()) { }
 				else {
 					KeeperAddEvent kae = new KeeperAddEvent(e,FName.getText());

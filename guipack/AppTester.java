@@ -12,7 +12,9 @@ import java.util.Map.Entry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -47,6 +49,7 @@ public class AppTester {
 	private KeeperController model;
 	private Point minSize;
 	protected Shell shell;
+	private Note keepModel;
 	
 	private Label editor;
 	private Label LInsert;
@@ -214,14 +217,16 @@ public class AppTester {
 				//FilterWindow filter = new FilterWindow(shell);
 			}
 		});
+		LFilter.setVisible(false);
 		
 		LInsert = FormDataObject.getFormedControl(15, 36, 85, 66, Label.class, navButtons, SWT.NONE);
 		LInsert.setBackground(darkGrey);
 		LInsert.addMouseListener(new MouseAdapter(){
 			public void mouseDown(MouseEvent e){
-				//AddShell form = new AddShell(keepModel, shlMarko,400,200);
+				AddShell form = new AddShell(keepModel, shell, 400, 200);
 			}
 		});
+		LInsert.setVisible(false);
 		
 		editor = new Label(navButtons, SWT.NONE);
 		editor.addMouseListener(new MouseAdapter(){
@@ -230,6 +235,7 @@ public class AppTester {
 				LInsert.setVisible(!LInsert.getVisible());
 			}
 		});
+		editor.setVisible(false);
 		
 		FormData fd_editor = new FormData();
 		fd_editor.top = new FormAttachment(68);
@@ -310,6 +316,19 @@ public class AppTester {
 			public void widgetSelected(SelectionEvent e){
 				shell.dispose();
 			}
+		});
+		
+		keepView.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent arg0) {
+				IStructuredSelection selection = (IStructuredSelection)arg0.getSelection();
+				keepModel = (Note)selection.getFirstElement();
+				territoryView.getViewer().setInput(keepModel);
+				keepView.getViewer().refresh();
+				editor.setVisible(true);
+			}
+			
 		});
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
