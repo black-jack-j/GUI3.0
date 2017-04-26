@@ -13,7 +13,9 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import filterpack.KeeperFilter;
 import gui.*;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.CLabel;
 
 public class AppTester {
 	private TableProvider<KeeperController> keepView;
@@ -129,7 +132,7 @@ public class AppTester {
 		minSize.y = 720;
 		shell.setSize(640, 480);
 		
-		shell.addControlListener(new ControlAdapter() {
+		/**shell.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
 				if(shell.getSize().x <= minSize.x & shell.getSize().y >= minSize.y){
@@ -164,7 +167,7 @@ public class AppTester {
 					
 				}
 			}
-		});
+		});**/
 		shell.setText("SWT Application");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
@@ -175,8 +178,8 @@ public class AppTester {
 		FormData fd_leftTable = new FormData();
 		fd_leftTable.top = new FormAttachment(15);
 		fd_leftTable.left = new FormAttachment(1);
-		fd_leftTable.right = new FormAttachment(60);
-		leftTable.setLayoutData(fd_leftTable);
+		fd_leftTable.right = new FormAttachment(40);
+		fd_leftTable.bottom = new FormAttachment(99);
 		leftTable.setLayoutData(fd_leftTable);
 		leftTable.setLayout(new FormLayout());
 		
@@ -222,6 +225,17 @@ public class AppTester {
 		shell.setMenuBar(mainMenu);
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
+		
+		Composite filterWindow = new Composite(mainScreen, SWT.NONE);
+		filterWindow.setLayout(new FormLayout());
+		Text text = FormDataObject.getFormedControl(10, 5, 90, 20, Text.class, filterWindow, SWT.NONE);
+		
+		FormData fd_composite = new FormData();
+		fd_composite.left = new FormAttachment(41);
+		fd_composite.top = new FormAttachment(leftTable, 0, SWT.TOP);
+		fd_composite.right = new FormAttachment(60);
+		fd_composite.bottom = new FormAttachment(99);
+		filterWindow.setLayoutData(fd_composite);
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
 				@Override
