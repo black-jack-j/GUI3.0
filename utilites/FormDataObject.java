@@ -41,4 +41,14 @@ public class FormDataObject<T> {
 		}
 		return null;
 	}
+	public static Composite getFormedComposite(int left, int top, int right, int bottom, Composite parent, int style){
+		Composite comp = new Composite(parent, style);
+		FormData fd = new FormData();
+		fd.top = new FormAttachment(top);
+		fd.left = new FormAttachment(left);
+		fd.right = new FormAttachment(right);
+		fd.bottom = new FormAttachment(bottom);
+		comp.setLayoutData(fd);
+		return comp;
+	}
 }
