@@ -6,9 +6,9 @@ public class Territory {
 		this.setName(name);
 		this.setSquare(square);
 	}
-	private void setSquare(double square2) {this.square = square2;}
+	public void setSquare(double square2) {this.square = square2;}
 	
-	private void setName(String name2) {this.name = name2;}
+	public void setName(String name2) {this.name = name2;}
 
 	public void expand(double psnts) {square = square + square * psnts / 100;}
 

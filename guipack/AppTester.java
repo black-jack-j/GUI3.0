@@ -26,6 +26,8 @@ import filterpack.KeeperFilter;
 import filterpack.TerritoryKeyFilter;
 import filterpack.TerritoryNameFilter;
 import filterpack.TerritorySizeFilter;
+import functions.KeeperNameEditingSupport;
+import functions.KeeperSizeEditingSupport;
 import gui.*;
 
 import org.eclipse.swt.SWT;
@@ -291,7 +293,7 @@ public class AppTester {
 		Text keyFilter = FormDataObject.getFormedControl(50, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
-		
+		territoryView.getViewer().addFilter(tkf);
 		keyFilter.addModifyListener(new ModifyListener(){
 
 			@Override
@@ -301,7 +303,7 @@ public class AppTester {
 			}
 			
 		});
-		territoryView.getViewer().addFilter(tkf);
+		
 		TerritoryNameFilter tnf = new TerritoryNameFilter();
 		
 		Text nameFilter = FormDataObject.getFormedControl(50, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
@@ -315,7 +317,6 @@ public class AppTester {
 			}
 			
 		});
-		territoryView.getViewer().addFilter(tnf);
 		
 		TerritorySizeFilter tsf = new TerritorySizeFilter();
 		
@@ -329,31 +330,6 @@ public class AppTester {
 				territoryView.getViewer().refresh();
 			}
 			
-		});
-		territoryView.getViewer().addFilter(tsf);
-		LFilter.addMouseListener(new MouseAdapter() {
-			
-			@Override
-			public void mouseDown(MouseEvent e) {
-				
-				FormData tmp = (FormData)filterWindow.getLayoutData();
-				FormData fd = (FormData)rightTable.getLayoutData();
-				
-				if (isActiveFilter){
-					fd.top = new FormAttachment(filterWindow);
-					
-					tmp.bottom = new FormAttachment(1);
-					isActiveFilter = false;
-				}else{
-					fd.top = new FormAttachment(filterWindow,10);
-					
-					tmp.bottom = new FormAttachment(30);
-					isActiveFilter = true;
-				}
-				rightTable.setLayoutData(fd);
-				filterWindow.setLayoutData(tmp);
-				mainScreen.layout();
-			}
 		});
 		
 		MenuItem menuCollection = new MenuItem(mainMenu, SWT.CASCADE);
@@ -410,6 +386,33 @@ public class AppTester {
 		});
 		
 		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
+		territoryView.getViewer().addFilter(tkf);
+		territoryView.getViewer().addFilter(tsf);
+		LFilter.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseDown(MouseEvent e) {
+				
+				FormData tmp = (FormData)filterWindow.getLayoutData();
+				FormData fd = (FormData)rightTable.getLayoutData();
+				
+				if (isActiveFilter){
+					fd.top = new FormAttachment(filterWindow);
+					
+					tmp.bottom = new FormAttachment(1);
+					isActiveFilter = false;
+				}else{
+					fd.top = new FormAttachment(filterWindow,10);
+					
+					tmp.bottom = new FormAttachment(30);
+					isActiveFilter = true;
+				}
+				rightTable.setLayoutData(fd);
+				filterWindow.setLayoutData(tmp);
+				mainScreen.layout();
+			}
+		});
+		
 		providers = new ColumnLabelProvider[]{
 			new ColumnLabelProvider(){
 				@Override
@@ -435,6 +438,7 @@ public class AppTester {
 		};
 		
 		territoryView.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
+		territoryView.getViewer().addFilter(tnf);
 		territoryView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
 		keepView.getHeader().setBackground(new Color(Display.getCurrent(),103,157,246));
 		keepView.setSize(100,94).addSearch(new KeeperFilter());
@@ -555,6 +559,8 @@ public class AppTester {
 			}
 			
 		});
+		territoryView.getColumn(1).setEditingSupport(new KeeperNameEditingSupport(territoryView.getViewer()));
+		territoryView.getColumn(2).setEditingSupport(new KeeperSizeEditingSupport(territoryView.getViewer()));
 		keepView.getViewer().refresh();
 	}
 }

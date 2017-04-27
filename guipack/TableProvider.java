@@ -174,4 +174,11 @@ public class TableProvider<T> {
 	public Composite getHeader(){
 		return header;
 	}
+	
+	public TableViewerColumn getColumn(int i){
+		return cols.get(i);
+	}
+	public void addFilter(CustomFilter cs){
+		viewer.addFilter(cs);
+	}
 }
