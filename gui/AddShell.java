@@ -20,7 +20,7 @@ public class AddShell {
 	private Text keyField;
 	private Text nameField;
 	private Text sizeField;
-	AddShell(Note km, Shell parent, int width, int height){
+	public AddShell(Note km, Shell parent, int width, int height){
 		Shell dialog = new Shell(parent, SWT.DIALOG_TRIM| SWT.APPLICATION_MODAL);
 		List<Label> list = new ArrayList<>();
 		dialog.setSize(400, 210);

@@ -368,7 +368,6 @@ public class App {
 				int i = Keepers.getSelectionIndex();
 				IStructuredSelection selection1 = (IStructuredSelection) KeeperViewer.getSelection();
 				Note n1 = (Note) selection1.getFirstElement();
-				System.out.println(n1.getPath().toString());
 				if (i!=-1){
 					if(e.button==3){
 						Menu keepConMenu = new Menu(Keepers);

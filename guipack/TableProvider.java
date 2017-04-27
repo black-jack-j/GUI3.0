@@ -109,7 +109,7 @@ public class TableProvider<T> {
 		FormAttachment fR = fd.right;
 		FormAttachment fL = fd.left;
 		int width = (fR.numerator-fL.numerator)*viewer.getTable().getShell().getClientArea().width/100;
-		setWidth(width/cols.size());
+		if (!cols.isEmpty())setWidth(width/cols.size());
 		return this;
 	}
 	
