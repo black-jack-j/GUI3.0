@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import filterpack.CustomFilter;
+import utilites.FormDataObject;
 
 public class TableProvider<T> {
 	private Composite header;
@@ -130,22 +131,13 @@ public class TableProvider<T> {
 	}
 	
 	public <F extends CustomFilter> void addSearch(F f){
-		Composite border = new Composite(header,SWT.NONE);
-		border.setLayout(new FormLayout());
-		Text search = new Text(border,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
-		FormData s = new FormData();
-		s.left = new FormAttachment(69);
-		s.right = new FormAttachment(99);
-		s.top = new FormAttachment(9);
-		s.bottom = new FormAttachment(90);
-		border.setLayoutData(s);
-		FormData s2 = new FormData();
-		s2.left = new FormAttachment(1);
-		s2.right = new FormAttachment(99);
-		s2.top = new FormAttachment(5);
-		s2.bottom = new FormAttachment(95);
-		border.setBackground(new Color(Display.getCurrent(), 121,121,121));
-		search.setLayoutData(s2);
+		Composite outBorder = FormDataObject.getFormedComposite(69, 9, 99, 91, Composite.class, header, SWT.NONE);
+		outBorder.setLayout(new FormLayout());
+		Composite inBorder = FormDataObject.getFormedComposite(0, 0, 100, 100, Composite.class, outBorder, SWT.NONE);
+		inBorder.setLayout(new FormLayout());
+		Text search = FormDataObject.getFormedControl(2,7,98,93,Text.class, inBorder ,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
+		outBorder.setBackground(new Color(Display.getCurrent(),255,255,255));
+		inBorder.setBackground(new Color(Display.getCurrent(), 121,121,121));
 		search.addModifyListener(new ModifyListener(){
 
 			@Override

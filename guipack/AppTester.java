@@ -34,6 +34,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
@@ -176,42 +177,6 @@ public class AppTester {
 		minSize = shell.getMinimumSize();
 		minSize.y = 720;
 		shell.setSize(640, 480);
-		/*shell.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				if(shell.getSize().x <= minSize.x & shell.getSize().y >= minSize.y){
-					FormData fd = new FormData();
-					fd.top = new FormAttachment(1);
-					fd.left = new FormAttachment(1);
-					fd.right = new FormAttachment(99);
-					fd.bottom = new FormAttachment(19);
-					rightTable.setLayoutData(fd);
-					
-					FormData tmp = new FormData();
-					tmp.top = new FormAttachment(20);
-					tmp.left = new FormAttachment(1);
-					tmp.right = new FormAttachment(99);
-					tmp.bottom = new FormAttachment(99);
-					leftTable.setLayoutData(tmp);
-					
-				}else{
-					FormData fd_rightTable = new FormData();
-					fd_rightTable.bottom = new FormAttachment(99);
-					fd_rightTable.right = new FormAttachment(99);
-					fd_rightTable.top = new FormAttachment(15);
-					fd_rightTable.left = new FormAttachment(61);
-					rightTable.setLayoutData(fd_rightTable);
-					
-					FormData fd_leftTable = new FormData();
-					fd_leftTable.top = new FormAttachment(15);
-					fd_leftTable.left = new FormAttachment(1);
-					fd_leftTable.right = new FormAttachment(60);
-					fd_leftTable.bottom = new FormAttachment(99);
-					leftTable.setLayoutData(fd_leftTable);
-					
-				}
-			}
-		});*/
 		shell.setText("SWT Application");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
@@ -238,6 +203,7 @@ public class AppTester {
 			}
 		});
 		editor.setVisible(false);
+		editor.setImage(new Image(Display.getCurrent(),"C:/users/fitisovdmtr/Documents/lab6styles/images/ArrowUp.png"));
 		FormData fd_editor = new FormData();
 		fd_editor.top = new FormAttachment(68);
 		fd_editor.left = new FormAttachment(15);
@@ -286,7 +252,7 @@ public class AppTester {
 		
 		Composite filterHeader = FormDataObject.getFormedComposite(0, 0, 100, 17, Composite.class, filterWindow, SWT.NONE);
 		
-		filterHeader.setBackground(new Color(Display.getCurrent(),142,0,0));
+		filterHeader.setBackground(new Color(Display.getCurrent(), 40, 111, 195));
 		
 		Text keyFilter = FormDataObject.getFormedControl(50, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		
@@ -343,10 +309,10 @@ public class AppTester {
 				KeeperInc tmp = new KeeperInc(shell, model);
 			}
 		});
-		mNew.setText("Create new map");
+		mNew.setText("New");
 		
 		MenuItem mLoad = new MenuItem(menu_1, SWT.NONE);
-		mLoad.setText("Load map");
+		mLoad.setText("Open...");
 		mLoad.addSelectionListener(new SelectionAdapter(){
 			
 			public void widgetSelected(SelectionEvent se){
@@ -362,8 +328,23 @@ public class AppTester {
 			}
 		});
 		
+		MenuItem mntmSave = new MenuItem(menu_1, SWT.NONE);
+		mntmSave.setText("Save");
+		
+		MenuItem mntmSaveAs = new MenuItem(menu_1, SWT.NONE);
+		mntmSaveAs.setText("Save As...");
+		
 		MenuItem mExit = new MenuItem(menu_1, SWT.NONE);
 		mExit.setText("Exit");
+		
+		MenuItem mntmEdit = new MenuItem(mainMenu, SWT.CASCADE);
+		mntmEdit.setText("Edit");
+		
+		Menu menu = new Menu(mntmEdit);
+		mntmEdit.setMenu(menu);
+		
+		MenuItem mntmPath = new MenuItem(menu, SWT.NONE);
+		mntmPath.setText("Path...");
 		mExit.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				shell.dispose();
@@ -383,7 +364,6 @@ public class AppTester {
 			
 		});
 		
-		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
 		territoryView.getViewer().addFilter(tkf);
 		territoryView.getViewer().addFilter(tsf);
 		LFilter.addMouseListener(new MouseAdapter() {
@@ -497,11 +477,11 @@ public class AppTester {
 						MenuItem saveAs = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem info = new MenuItem(keepConMenu, SWT.NONE);
 						MenuItem delete = new MenuItem(keepConMenu,SWT.NONE);
-						edit.setText("edit");
-						save.setText("save");
-						saveAs.setText("save as");
-						info.setText("info");
-						delete.setText("delete");
+						edit.setText("Edit");
+						save.setText("Save");
+						saveAs.setText("Save As...");
+						info.setText("Info");
+						delete.setText("Delete");
 						keepView.getTable().setMenu(keepConMenu);
 						save.addSelectionListener(new SelectionAdapter(){
 							public void widgetSelected(SelectionEvent se){
