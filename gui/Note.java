@@ -32,8 +32,10 @@ public class Note implements Comparable<Note>{
 		File f = new File(path.toString());
 		try {
 			f.createNewFile();
+			boolean isWritable = f.canWrite();
 			f.setWritable(true);
 			keep.getKeeper().save(f);
+			f.setWritable(isWritable);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

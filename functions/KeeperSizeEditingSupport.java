@@ -32,8 +32,9 @@ public class KeeperSizeEditingSupport extends EditingSupport{
 	}
 	@Override
 	protected void setValue(Object arg0, Object arg1) {
-		if (String.valueOf(arg1).matches("(\\d)*(\\.?)(\\d)*")){
-			((Entry<String, Territory>)arg0).getValue().setSquare(Double.parseDouble(String.valueOf(arg1)));
+		if (String.valueOf(arg1).matches("(\\d)*([\\.,])?(\\d)*")){
+			String s = String.valueOf(arg1).replace(',', '.');
+			if (!s.trim().isEmpty())((Entry<String, Territory>)arg0).getValue().setSquare(Double.parseDouble(s));
 		}
 		viewer.update(arg0, null);
 	}

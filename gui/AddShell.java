@@ -98,8 +98,8 @@ public class AddShell {
 		sizeField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				try {
-					System.out.println(sizeField.getText().trim().matches("(\\d)*(\\.)?(\\d)*"));
-					if(sizeField.getText().trim().isEmpty()||(!sizeField.getText().matches("(\\d)*(\\.)?(\\d)*"))){
+					System.out.println(sizeField.getText().trim().matches("(\\d)*([\\.,])?(\\d)*"));
+					if(sizeField.getText().trim().isEmpty()||(!sizeField.getText().matches("(\\d)*([\\.,])?(\\d)*"))){
 						throw new IncorrectFieldValueException(sizeFail,sizeField);
 					}else sizeFail.setVisible(false);
 				} catch (IncorrectFieldValueException e1) {
@@ -139,7 +139,8 @@ public class AddShell {
 					if (keyField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(keyFail, keyField);
 					if (nameField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(nameFail, nameField);
 					if (sizeFail.isVisible()|sizeField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(sizeFail, sizeField);
-					double square = Double.parseDouble(sizeField.getText());
+					String s = sizeField.getText().replace(',', '.');
+					double square = Double.parseDouble(s);
 					km.getKeep().addTerritory(keyField.getText(), new Territory(nameField.getText(),square));
 					km.getKeep().territoryCreated(new TerritoryAddEvent(e));
 					dialog.dispose();

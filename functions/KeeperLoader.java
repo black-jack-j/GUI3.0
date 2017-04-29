@@ -44,7 +44,7 @@ public class KeeperLoader implements Runnable{
 			}else{
 				note = new Note(path, new KeepModel(new Keeper("Default")));
 			}
-			note.getKeep().AddTerritoryListener(listeners);
+			if(!listeners.isEmpty()) note.getKeep().AddTerritoryListener(listeners);
 			synchronized(commonRes){
 				commonRes.add(note);
 			}

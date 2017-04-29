@@ -4,7 +4,6 @@ import kevents.*;
 import tevents.TerritoryAddEvent;
 import tevents.TerritoryListener;
 import tevents.TerritoryRemoveEvent;
-import utilites.ActiveFontChanger;
 import utilites.FormDataObject;
 
 import java.io.IOException;
@@ -17,7 +16,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -36,10 +34,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
@@ -105,22 +100,24 @@ public class AppTester {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
+		
+		TerritoryListener tmp = new TerritoryListener(){
+
+			@Override
+			public void territoryCreated(TerritoryAddEvent tae) {
+				// TODO Auto-generated method stub
+				territoryView.getViewer().refresh();
+			}
+
+			@Override
+			public void territoryRemoved(TerritoryRemoveEvent tre) {
+				// TODO Auto-generated method stub
+				territoryView.getViewer().refresh();
+			}
+			
+		};
+		
 		try {
-			TerritoryListener tmp = new TerritoryListener(){
-
-				@Override
-				public void territoryCreated(TerritoryAddEvent tae) {
-					// TODO Auto-generated method stub
-					territoryView.getViewer().refresh();
-				}
-
-				@Override
-				public void territoryRemoved(TerritoryRemoveEvent tre) {
-					// TODO Auto-generated method stub
-					territoryView.getViewer().refresh();
-				}
-				
-			};
 			model = new KeeperController("C:/users/fitisovdmtr/lab/config.xml", tmp);
 		} catch (IOException e) {
 			System.out.println("failed to connect to config file");
@@ -132,16 +129,17 @@ public class AppTester {
 			public void keeperCreated(KeeperAddEvent kae) {
 				switch(kae.m){
 				case create:{
-					model.addKeeper(kae.getMessage());
+					model.addKeeper(kae.getMessage(), tmp);
 					break;
 				}
 				case load:{
-					model.loadKeeper(kae.getMessage());
+					model.loadKeeper(kae.getMessage(),tmp);
 					break;
 				}
 				default: break;
 			}
 				keepView.getViewer().refresh();
+				territoryView.getViewer().refresh();
 		}
 
 			@Override
@@ -509,6 +507,7 @@ public class AppTester {
 							public void widgetSelected(SelectionEvent se){
 								Note tmp = ((Note)selection1.getFirstElement());
 								tmp.save();
+								System.out.println("File \"" + tmp.getKeep().getName() + "\" was saved at " + tmp.getPath().toString());
 							}
 						});
 						saveAs.addSelectionListener(new SelectionAdapter(){

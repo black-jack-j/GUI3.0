@@ -3,6 +3,7 @@ package gui;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
@@ -114,12 +115,14 @@ public class Keeper{
 	private class XMLParser{
 		Document doc;
 		public void getXMLForm(File file){
-			OutputStreamWriter osw = null;
+			FileWriter osw = null;
 			try {
-				osw = new OutputStreamWriter(new FileOutputStream(file));
+				osw = new FileWriter(file);
 			} catch (FileNotFoundException e1) {
 				System.out.println("File wasn't found");
 				System.out.println(e1.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			Element rootElem = new Element("storage");
 			rootElem.setAttribute("name", name);
@@ -143,6 +146,7 @@ public class Keeper{
 			XMLOutputter xml = new XMLOutputter(f);
 			try {
 				xml.output(doc, osw);
+				osw.close();
 			} catch (IOException e) {
 				System.out.println("Bad");
 			}

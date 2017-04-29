@@ -128,6 +128,7 @@ public class KeeperController {
 				synchronized(f){
 					try {
 						f.createNewFile();
+						boolean isWritable = f.canWrite();
 						f.setWritable(true);
 						FileWriter fw = new FileWriter(f);
 						Document doc = new Document();
@@ -136,7 +137,8 @@ public class KeeperController {
 						frmt.setEncoding("cp1251");
 						XMLOutputter xml = new XMLOutputter();
 						xml.output(doc, fw);
-						System.out.println("All clear");
+						fw.close();
+						f.setWritable(isWritable);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -148,7 +150,12 @@ public class KeeperController {
 		t.start();
 	}
 	public void addKeeper(String name){
-		collections.add(new Note(Paths.get(defaultPath.toString()+name+".xml"), new KeepModel(new Keeper(name))));
+		collections.add(new Note(Paths.get(defaultPath.toString()+"/"+name+".xml"), new KeepModel(new Keeper(name))));
+	}
+	public void addKeeper(String name, TerritoryListener...listeners){
+		Note n = new Note(Paths.get(defaultPath.toString()+"/"+name+".xml"), new KeepModel(new Keeper(name)));
+		n.getKeep().AddTerritoryListener(listeners);
+		collections.add(n);
 	}
 	List<Note> getNStorage(){
 		List<Note> l = new ArrayList<Note>();
@@ -168,6 +175,7 @@ public class KeeperController {
 		workPath = Paths.get(path);
 		defaultPath = Paths.get("C:/users/fitisovdmtr/lab/collections/");
 		File f = new File(workPath.toString());
+		new File(defaultPath.toString()).mkdir();
 		new File(workPath.getParent().toString()).mkdirs();
 		try {
 			if(!f.createNewFile()){
