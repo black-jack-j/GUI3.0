@@ -25,9 +25,16 @@ public class KeeperInc {
 		nameFail.setText("incorrect value");
 		nameFail.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		nameFail.setFont(SWTResourceManager.getFont("Segoe UI", 7, SWT.NORMAL));
-		nameFail.setBounds(167, 50, 90, 15);
+		nameFail.setBounds(290, 80, 90, 15);
 		nameFail.setVisible(false);
-		
+
+		Label instruction = new Label(window, SWT.NONE);
+		instruction.setText("Name of map");
+		instruction.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		instruction.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
+		instruction.setBounds(110, 50, 150, 15);
+		instruction.setVisible(true);
+
 		control = tmp;
 		FName = new Text(window, SWT.BORDER);
 		FName.setBounds(110, 74, 174, 31);

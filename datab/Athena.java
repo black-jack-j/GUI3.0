@@ -1,3 +1,4 @@
+/*
 package datab;
 import java.sql.*;
 public class Athena {
@@ -9,7 +10,7 @@ public class Athena {
 			e.printStackTrace();
 		}
 		try {
-			Connection db = DriverManager.getConnection("jdbc:postgresql:postgres", 
+			Connection db = DriverManager.getConnection("jdbc:postgresql:postgres",
 							"postgres", "evening64night");
 			Statement st = db.createStatement();
 			while(rs.next()){
@@ -21,3 +22,4 @@ public class Athena {
 		}
 	}
 }
+*/

@@ -64,6 +64,7 @@ public class AppTester {
 	private Label editor;
 	private Label LInsert;
 	private Label LFilter;
+	private Label Search;
 
 	Device dev = Display.getCurrent();
 	Color deepGrey = new Color(dev,81,81,81);
@@ -171,7 +172,7 @@ public class AppTester {
 		Composite filterWindow = FormDataObject.getFormedComposite(61, 1, 99, 1, Composite.class, mainScreen, SWT.NONE);
 		Composite leftTable = FormDataObject.getFormedComposite(1,1,60,99,Composite.class ,mainScreen, SWT.NONE);
 		Composite rightTable = FormDataObject.getFormedComposite(61,new FormAttachment(filterWindow),99,99,Composite.class,  mainScreen, SWT.NONE);
-		
+
 		Composite navButtons = FormDataObject.getFormedComposite(90, 78, 98, 98,Composite.class, leftTable, SWT.NONE);
 		leftTable.setLayout(new FormLayout());
 		rightTable.setLayout(new FormLayout());
@@ -181,7 +182,6 @@ public class AppTester {
 		minSize = shell.getMinimumSize();
 		minSize.y = 720;
 		shell.setSize(640, 480);
-		shell.setText("SWT Application");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		mainScreen.setLayout(new FormLayout());
@@ -199,7 +199,8 @@ public class AppTester {
 		});
 		LInsert.setVisible(false);
 		
-		editor = new Label(navButtons, SWT.NONE);
+		editor = FormDataObject.getFormedControl(15,68,85,98, Label.class, navButtons, SWT.NONE);
+		editor.setBackground(white);
 		editor.addMouseListener(new MouseAdapter(){
 			public void mouseDown(MouseEvent e){
 				LFilter.setVisible(!LFilter.getVisible());
@@ -207,14 +208,8 @@ public class AppTester {
 			}
 		});
 		editor.setVisible(false);
-		editor.setImage(new Image(Display.getCurrent(),"C:/users/fitisovdmtr/Documents/lab6styles/images/ArrowUp.png"));
-		FormData fd_editor = new FormData();
-		fd_editor.top = new FormAttachment(68);
-		fd_editor.left = new FormAttachment(15);
-		fd_editor.bottom = new FormAttachment(98);
-		fd_editor.right = new FormAttachment(85);
-		editor.setLayoutData(fd_editor);
-		editor.setBackground(white);
+		//editor.setImage(new Image(Display.getCurrent(),"C:/users/fitisovdmtr/Documents/lab6styles/images/ArrowUp.png"));
+
 		
 		keepView = new TableProvider<KeeperController>(new KeeperContentProvider(), model, rightTable, SWT.FULL_SELECTION);
 		ColumnLabelProvider[] providers = new ColumnLabelProvider[]{
@@ -235,7 +230,7 @@ public class AppTester {
 		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 94);
 		
 		keepView.getTable().addSelectionListener(new SelectionAdapter(){
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent se){
 				IStructuredSelection s = keepView.getViewer().getStructuredSelection();
@@ -257,18 +252,17 @@ public class AppTester {
 		Composite filterHeader = FormDataObject.getFormedComposite(0, 0, 100, 17, Composite.class, filterWindow, SWT.NONE);
 		
 		filterHeader.setBackground(new Color(Display.getCurrent(), 40, 111, 195));
-		
+
 		Text keyFilter = FormDataObject.getFormedControl(50, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
-		
+		keyFilter.setMessage("Filter by key...");
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
 		keyFilter.addModifyListener(new ModifyListener(){
-
 			@Override
 			public void modifyText(ModifyEvent arg0) {
 				tkf.setSearch(keyFilter.getText());
 				territoryView.getViewer().refresh();
 			}
-			
+
 		});
 		keyFilter.addControlListener(new ControlListener(){
 
@@ -289,7 +283,7 @@ public class AppTester {
 		TerritoryNameFilter tnf = new TerritoryNameFilter();
 		
 		Text nameFilter = FormDataObject.getFormedControl(50, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
-		
+		nameFilter.setMessage("Filter by name...");
 		nameFilter.addModifyListener(new ModifyListener(){
 
 			@Override
@@ -318,7 +312,7 @@ public class AppTester {
 		TerritorySizeFilter tsf = new TerritorySizeFilter();
 		
 		Text sizeFilter = FormDataObject.getFormedControl(50, 50, 85, 63, Text.class, filterWindow, SWT.NONE);
-		
+		sizeFilter.setMessage("Filter by square...");
 		sizeFilter.addModifyListener(new ModifyListener(){
 
 			@Override
@@ -527,12 +521,10 @@ public class AppTester {
 						MenuItem edit = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem save = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem saveAs = new MenuItem(keepConMenu,SWT.NONE);
-						MenuItem info = new MenuItem(keepConMenu, SWT.NONE);
 						MenuItem delete = new MenuItem(keepConMenu,SWT.NONE);
 						edit.setText("Edit");
 						save.setText("Save");
 						saveAs.setText("Save As...");
-						info.setText("Info");
 						delete.setText("Delete");
 						keepView.getTable().setMenu(keepConMenu);
 						save.addSelectionListener(new SelectionAdapter(){
@@ -560,11 +552,6 @@ public class AppTester {
 								model.removeNote((Note)selection1.getFirstElement());
 								model.keeperDeleted(new KeeperRemoveEvent(se));
 								keepView.getTable().deselectAll();
-								
-							}
-						});
-						info.addSelectionListener(new SelectionAdapter(){
-							public void widgetSelected(SelectionEvent se){
 								
 							}
 						});
