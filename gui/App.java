@@ -407,7 +407,7 @@ public class App {
 							public void widgetSelected(SelectionEvent se){
 								IStructuredSelection selection = (IStructuredSelection) KeeperViewer.getSelection();
 								model.removeNote((Note)selection.getFirstElement());
-								model.keeperDeleted(new KeeperRemoveEvent(se,i));
+								model.keeperDeleted(new KeeperRemoveEvent(se));
 								Keepers.deselectAll();
 								
 							}
