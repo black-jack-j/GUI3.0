@@ -261,7 +261,6 @@ public class AppTester {
 		Text keyFilter = FormDataObject.getFormedControl(50, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
-		territoryView.getViewer().addFilter(tkf);
 		keyFilter.addModifyListener(new ModifyListener(){
 
 			@Override
@@ -415,8 +414,6 @@ public class AppTester {
 			
 		});
 		
-		territoryView.getViewer().addFilter(tkf);
-		territoryView.getViewer().addFilter(tsf);
 		LFilter.addMouseListener(new MouseAdapter() {
 			
 			@Override
@@ -427,15 +424,20 @@ public class AppTester {
 				
 				if (isActiveFilter){
 					fd.top = new FormAttachment(filterWindow);
-					
+					territoryView.getViewer().removeFilter(tsf);
+					territoryView.getViewer().removeFilter(tnf);
+					territoryView.getViewer().removeFilter(tkf);
 					tmp.bottom = new FormAttachment(1);
 					isActiveFilter = false;
 				}else{
 					fd.top = new FormAttachment(filterWindow,10);
-					
+					territoryView.getViewer().addFilter(tkf);
+					territoryView.getViewer().addFilter(tnf);
+					territoryView.getViewer().addFilter(tsf);
 					tmp.bottom = new FormAttachment(30);
 					isActiveFilter = true;
 				}
+				territoryView.getViewer().refresh();
 				rightTable.setLayoutData(fd);
 				filterWindow.setLayoutData(tmp);
 				mainScreen.layout();
@@ -467,7 +469,6 @@ public class AppTester {
 		};
 		
 		territoryView.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
-		territoryView.getViewer().addFilter(tnf);
 		territoryView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
 		keepView.getHeader().setBackground(new Color(Display.getCurrent(),103,157,246));
 		keepView.setSize(100,94).addSearch(new KeeperFilter());
