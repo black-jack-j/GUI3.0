@@ -528,12 +528,13 @@ public class AppTester {
 				IStructuredSelection s = (IStructuredSelection) arg0.getSelection();
 				if(!s.isEmpty()) {
 					bros.setUrl("http://maps.google.com/?q="+((Note)s.getFirstElement()).getKeep().getName());
-					browser.setSize(640, 480);
-					if (!browser.isVisible()){
+					System.out.println(bros.getUrl());
+					if (browser.isDisposed()){
+						browser.setSize(640, 480);
 						browser.open();
+					}else if(browser.isVisible()){
+						bros.refresh();
 					}
-					System.out.println(((Note)s.getFirstElement()).getKeep().getName());
-					bros.refresh();
 				}
 			}
 			

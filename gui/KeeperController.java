@@ -20,10 +20,12 @@ import org.jdom2.output.XMLOutputter;
 import functions.KeeperLoader;
 import functions.KeeperSaver;
 import kevents.*;
+import observers.Marksman;
 import tevents.*;
 
 public class KeeperController {
-	Set<Note> collections;
+	private Set<Note> collections;
+	private List<Marksman> clients;
 	private Path workPath;
 	private Path defaultPath;
 	private List<KeeperListener> keeperListeners;
