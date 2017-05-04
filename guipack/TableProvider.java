@@ -136,6 +136,7 @@ public class TableProvider<T> {
 		Composite inBorder = FormDataObject.getFormedComposite(0, 0, 100, 100, Composite.class, outBorder, SWT.NONE);
 		inBorder.setLayout(new FormLayout());
 		Text search = FormDataObject.getFormedControl(2,7,98,93,Text.class, inBorder ,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
+		search.setMessage("Search...");
 		outBorder.setBackground(new Color(Display.getCurrent(),255,255,255));
 		inBorder.setBackground(new Color(Display.getCurrent(), 121,121,121));
 		search.addModifyListener(new ModifyListener(){
