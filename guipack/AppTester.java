@@ -34,6 +34,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +45,8 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -267,7 +271,22 @@ public class AppTester {
 			}
 			
 		});
-		
+		keyFilter.addControlListener(new ControlListener(){
+
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				FontData[] fd = keyFilter.getFont().getFontData();
+				fd[0].setHeight((int) (keyFilter.getClientArea().height*0.4));
+				keyFilter.setFont(new Font(Display.getCurrent(), fd[0]));
+			}
+			
+		});
 		TerritoryNameFilter tnf = new TerritoryNameFilter();
 		
 		Text nameFilter = FormDataObject.getFormedControl(50, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
@@ -281,7 +300,22 @@ public class AppTester {
 			}
 			
 		});
-		
+		nameFilter.addControlListener(new ControlListener(){
+
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				FontData[] fd = nameFilter.getFont().getFontData();
+				fd[0].setHeight((int) (nameFilter.getClientArea().height*0.4));
+				nameFilter.setFont(new Font(Display.getCurrent(), fd[0]));
+			}
+			
+		});
 		TerritorySizeFilter tsf = new TerritorySizeFilter();
 		
 		Text sizeFilter = FormDataObject.getFormedControl(50, 50, 85, 63, Text.class, filterWindow, SWT.NONE);
@@ -292,6 +326,23 @@ public class AppTester {
 			public void modifyText(ModifyEvent arg0) {
 				tsf.setMeasure(sizeFilter.getText());
 				territoryView.getViewer().refresh();
+			}
+			
+		});
+		
+		sizeFilter.addControlListener(new ControlListener(){
+
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				FontData[] fd = sizeFilter.getFont().getFontData();
+				fd[0].setHeight((int) (sizeFilter.getClientArea().height*0.4));
+				sizeFilter.setFont(new Font(Display.getCurrent(), fd[0]));
 			}
 			
 		});

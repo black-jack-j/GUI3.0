@@ -10,11 +10,16 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -136,6 +141,23 @@ public class TableProvider<T> {
 		Composite inBorder = FormDataObject.getFormedComposite(0, 0, 100, 100, Composite.class, outBorder, SWT.NONE);
 		inBorder.setLayout(new FormLayout());
 		Text search = FormDataObject.getFormedControl(2,7,98,93,Text.class, inBorder ,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
+		search.setMessage("search...");
+		search.addControlListener(new ControlListener(){
+
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				FontData[] fd = search.getFont().getFontData();
+				fd[0].setHeight((int) (search.getClientArea().height*0.4));
+				search.setFont(new Font(Display.getCurrent(), fd[0]));
+			}
+			
+		});
 		outBorder.setBackground(new Color(Display.getCurrent(),255,255,255));
 		inBorder.setBackground(new Color(Display.getCurrent(), 121,121,121));
 		search.addModifyListener(new ModifyListener(){
