@@ -141,7 +141,6 @@ public class TableProvider<T> {
 		Composite inBorder = FormDataObject.getFormedComposite(0, 0, 100, 100, Composite.class, outBorder, SWT.NONE);
 		inBorder.setLayout(new FormLayout());
 		Text search = FormDataObject.getFormedControl(2,7,98,93,Text.class, inBorder ,SWT.SEARCH|SWT.CANCEL|SWT.ICON_SEARCH);
-<<<<<<< HEAD
 		search.setMessage("search...");
 		search.addControlListener(new ControlListener(){
 
@@ -154,14 +153,12 @@ public class TableProvider<T> {
 			@Override
 			public void controlResized(ControlEvent arg0) {
 				FontData[] fd = search.getFont().getFontData();
-				fd[0].setHeight((int) (search.getClientArea().height*0.4));
+				fd[0].setHeight((int) (header.getParent().getParent().getClientArea().height*0.015));
 				search.setFont(new Font(Display.getCurrent(), fd[0]));
 			}
 			
 		});
-=======
-		search.setMessage("Search...");
->>>>>>> f52a102649bd41b61c007d56fe1a182c69f2f531
+		search.setMessage("Search..."); 
 		outBorder.setBackground(new Color(Display.getCurrent(),255,255,255));
 		inBorder.setBackground(new Color(Display.getCurrent(), 121,121,121));
 		search.addModifyListener(new ModifyListener(){

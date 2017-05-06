@@ -158,6 +158,7 @@ public class AppTester {
 			@Override
 			public void keeperUpdated(KeeperRefreshEvent kre) {
 				territoryView.getViewer().refresh();
+				keepView.getViewer().refresh();
 			}
 
 			@Override
@@ -227,7 +228,7 @@ public class AppTester {
 				}
 		};
 		
-		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 94);
+		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 92);
 		
 		keepView.getTable().addSelectionListener(new SelectionAdapter(){
 
@@ -275,7 +276,7 @@ public class AppTester {
 			@Override
 			public void controlResized(ControlEvent arg0) {
 				FontData[] fd = keyFilter.getFont().getFontData();
-				fd[0].setHeight((int) (keyFilter.getClientArea().height*0.4));
+				fd[0].setHeight((int) (mainScreen.getClientArea().height*0.015));
 				keyFilter.setFont(new Font(Display.getCurrent(), fd[0]));
 			}
 			
@@ -304,7 +305,7 @@ public class AppTester {
 			@Override
 			public void controlResized(ControlEvent arg0) {
 				FontData[] fd = nameFilter.getFont().getFontData();
-				fd[0].setHeight((int) (nameFilter.getClientArea().height*0.4));
+				fd[0].setHeight((int) (mainScreen.getClientArea().height*0.015));
 				nameFilter.setFont(new Font(Display.getCurrent(), fd[0]));
 			}
 			
@@ -334,7 +335,7 @@ public class AppTester {
 			@Override
 			public void controlResized(ControlEvent arg0) {
 				FontData[] fd = sizeFilter.getFont().getFontData();
-				fd[0].setHeight((int) (sizeFilter.getClientArea().height*0.4));
+				fd[0].setHeight((int) (mainScreen.getClientArea().height*0.015));
 				sizeFilter.setFont(new Font(Display.getCurrent(), fd[0]));
 			}
 			
@@ -465,7 +466,7 @@ public class AppTester {
 		territoryView.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
 		territoryView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
 		keepView.getHeader().setBackground(new Color(Display.getCurrent(),103,157,246));
-		keepView.setSize(100,94).addSearch(new KeeperFilter());
+		keepView.addSearch(new KeeperFilter());
 		
 		territoryView.getTable().addMouseListener(new MouseAdapter() {
 			@Override

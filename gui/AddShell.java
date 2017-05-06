@@ -98,7 +98,6 @@ public class AddShell {
 		sizeField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				try {
-					System.out.println(sizeField.getText().trim().matches("(\\d)*([\\.,])?(\\d)*"));
 					if(sizeField.getText().trim().isEmpty()||(!sizeField.getText().matches("(\\d)*([\\.,])?(\\d)*"))){
 						throw new IncorrectFieldValueException(sizeFail,sizeField);
 					}else sizeFail.setVisible(false);
@@ -115,7 +114,6 @@ public class AddShell {
 					else nameFail.setVisible(false);
 				} catch (IncorrectFieldValueException e1) {
 					e1.setMessage("can't be empty");
-					e1.clear();
 				}
 			}
 		});
@@ -127,7 +125,6 @@ public class AddShell {
 					else keyFail.setVisible(false);
 				} catch (IncorrectFieldValueException e1) {
 					e1.setMessage("can't be empty");
-					e1.clear();
 				}
 			}
 		});
