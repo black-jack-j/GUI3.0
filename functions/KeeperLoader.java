@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.jdom2.JDOMException;
 
-import gui.KeepModel;
 import gui.Keeper;
 import gui.Note;
 import gui.XMLParser;
@@ -40,11 +39,11 @@ public class KeeperLoader implements Runnable{
 				f.setReadable(true);
 				Keeper k = XMLParser.getStorage(f);
 				f.setReadable(b);
-				note = new Note(path, new KeepModel(k));
+				note = new Note(path, k);
 			}else{
-				note = new Note(path, new KeepModel(new Keeper("Default")));
+				note = new Note(path, new Keeper("Default"));
 			}
-			if(!listeners.isEmpty()) note.getKeep().AddTerritoryListener(listeners);
+			if(!listeners.isEmpty()) note.AddTerritoryListener(listeners);
 			synchronized(commonRes){
 				commonRes.add(note);
 			}

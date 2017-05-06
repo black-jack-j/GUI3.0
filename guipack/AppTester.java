@@ -36,7 +36,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.FillLayout;
@@ -223,7 +222,7 @@ public class AppTester {
 				new ColumnLabelProvider(){
 					public String getText(Object o){
 						Note km = (Note) o;
-						return km.getKeep().getSize();
+						return String.valueOf(km.getKeep().getSize());
 					}
 				}
 		};
@@ -495,8 +494,8 @@ public class AppTester {
 							
 							@Override
 							public void widgetSelected(SelectionEvent arg0) {
-								String tmp = ((Entry<String,Territory>) (selection.getFirstElement())).getKey();	
-								keepModel.getKeep().removeLower(tmp);
+								Double tmp = ((Entry<String,Territory>) (selection.getFirstElement())).getValue().getSquare();	
+								keepModel.getKeep().removeLower(new Territory("",tmp));
 								KeeperRefreshEvent kre = new KeeperRefreshEvent(arg0);
 								model.keeperUpdated(kre);
 							}

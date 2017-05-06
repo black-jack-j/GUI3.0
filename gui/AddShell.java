@@ -138,8 +138,8 @@ public class AddShell {
 					if (sizeFail.isVisible()|sizeField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(sizeFail, sizeField);
 					String s = sizeField.getText().replace(',', '.');
 					double square = Double.parseDouble(s);
-					km.getKeep().addTerritory(keyField.getText(), new Territory(nameField.getText(),square));
-					km.getKeep().territoryCreated(new TerritoryAddEvent(e));
+					km.getKeep().addComponent(keyField.getText(), new Territory(nameField.getText(),square));
+					km.territoryCreated(new TerritoryAddEvent(e));
 					dialog.dispose();
 				}catch(IncorrectFieldValueException ifv){
 					ifv.setMessage("incorrect value");

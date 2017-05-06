@@ -8,7 +8,7 @@ public class KeepContentProvider extends BaseLabelProvider implements IStructure
 	private Note keep;
 	@Override
 	public Object[] getElements(Object arg0) {
-		return keep.getKeep().getTerr().entrySet().toArray();
+		return keep.getKeep().getCollection().entrySet().toArray();
 	}
 	public void inputChanged(Viewer view, Object oldInput, Object newInput){
 		keep = (Note)newInput;

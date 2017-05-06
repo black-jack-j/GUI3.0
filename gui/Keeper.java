@@ -2,32 +2,56 @@ package gui;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-
+@Entity
+@NamedQuery(name="FindAll", query="SELECT k from Keeper k")
 public class Keeper{
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	private int id;
+	
 	private String name;
 	
+	@OneToMany(mappedBy="iMap", cascade=CascadeType.ALL)
+	@MapKeyColumn(name="PLACES")
 	private Map<String, Territory> Places;
 	
+	public void setPlaces(Map<String, Territory> places) {
+		Places = places;
+	}
+	public Keeper(){
+		
+	}
 	public Keeper(String name, Territory ... p){
 		this.setName(name);
 		Places = new HashMap<>();
-		for (int i=0;i<p.length;i++) Places.put( p[i].getName(), p[i]);
+		for (int i=0;i<p.length;i++) {
+			Places.put( p[i].getName(), p[i]);
+			p[i].setMap(this);
+		}
 	}
+	
 	public Keeper(String name, String[] key, Territory[] p){
 		this.setName(name);
 		Places = new HashMap<>();

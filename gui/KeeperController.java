@@ -152,11 +152,11 @@ public class KeeperController {
 		t.start();
 	}
 	public void addKeeper(String name){
-		collections.add(new Note(Paths.get(defaultPath.toString()+"/"+name+".xml"), new KeepModel(new Keeper(name))));
+		collections.add(new Note(Paths.get(defaultPath.toString()+"/"+name+".xml"), new Keeper(name)));
 	}
 	public void addKeeper(String name, TerritoryListener...listeners){
-		Note n = new Note(Paths.get(defaultPath.toString()+"/"+name+".xml"), new KeepModel(new Keeper(name)));
-		n.getKeep().AddTerritoryListener(listeners);
+		Note n = new Note(Paths.get(defaultPath.toString()+"/"+name+".xml"), new Keeper(name));
+		n.AddTerritoryListener(listeners);
 		collections.add(n);
 	}
 	List<Note> getNStorage(){

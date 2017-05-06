@@ -1,7 +1,32 @@
 package gui;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Territory {
+	@Id
+	@GeneratedValue(strategy=GenerationType.TABLE)
+	private int id;
+	
 	private String name;
 	private double square;
+	
+	@ManyToOne
+	private Keeper iMap;
+	
+	public Keeper getMap() {
+		return iMap;
+	}
+	public void setMap(Keeper map) {
+		this.iMap = map;
+	}
+	public Territory(){
+		
+	}
 	public Territory(String name, double square){
 		this.setName(name);
 		this.setSquare(square);

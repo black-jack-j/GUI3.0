@@ -2,13 +2,13 @@ package kevents;
 
 import java.util.EventObject;
 
-import gui.KeepModel;
+import gui.Keeper;
 import gui.Note;
 
 public class KeeperEvent extends EventObject{
-	private KeepModel km;
+	private Keeper km;
 	private Note n;
-	public KeeperEvent(Object source, KeepModel k) {
+	public KeeperEvent(Object source, Keeper k) {
 		super(source);
 		this.km = k;
 	}
@@ -16,7 +16,7 @@ public class KeeperEvent extends EventObject{
 		super(source);
 		this.n = k;
 	}
-	KeepModel getKeep(){
+	Keeper getKeep(){
 		return km;
 	}
 }

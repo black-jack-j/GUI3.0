@@ -1,6 +1,5 @@
 package kevents;
 
-import gui.KeepModel;
 import gui.Note;
 
 public class KeeperSelectionEvent extends KeeperEvent{
