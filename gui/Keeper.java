@@ -114,6 +114,11 @@ public class Keeper{
 			}
 		}
 	}
+
+	public int getId(){
+		return id;
+	}
+
 	/**
 	 * 
 	 */

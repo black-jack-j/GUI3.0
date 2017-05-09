@@ -253,7 +253,7 @@ public class AppTester {
 		
 		filterHeader.setBackground(new Color(Display.getCurrent(), 40, 111, 195));
 
-		Text keyFilter = FormDataObject.getFormedControl(50, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
+		Text keyFilter = FormDataObject.getFormedControl(15, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		keyFilter.setMessage("Filter by key...");
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
 		keyFilter.addModifyListener(new ModifyListener(){
@@ -282,7 +282,7 @@ public class AppTester {
 		});
 		TerritoryNameFilter tnf = new TerritoryNameFilter();
 		
-		Text nameFilter = FormDataObject.getFormedControl(50, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
+		Text nameFilter = FormDataObject.getFormedControl(15, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
 		nameFilter.setMessage("Filter by name...");
 		nameFilter.addModifyListener(new ModifyListener(){
 
@@ -311,7 +311,7 @@ public class AppTester {
 		});
 		TerritorySizeFilter tsf = new TerritorySizeFilter();
 		
-		Text sizeFilter = FormDataObject.getFormedControl(50, 50, 85, 63, Text.class, filterWindow, SWT.NONE);
+		Text sizeFilter = FormDataObject.getFormedControl(15, 50, 85, 63, Text.class, filterWindow, SWT.NONE);
 		sizeFilter.setMessage("Filter by square...");
 		sizeFilter.addModifyListener(new ModifyListener(){
 

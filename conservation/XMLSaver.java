@@ -32,7 +32,7 @@ public class XMLSaver implements Watchdog{
 	public XMLSaver(KeeperController kc){
 		que = new ArrayBlockingQueue<File>(1);
 		this.keeperController = kc;
-		this.file = new File(keeperController.getPath());
+		//this.file = new File(keeperController.getPath());
 	}
 	private void getXMLForm(Keeper keeper){
 		if (keeper == null) return;
