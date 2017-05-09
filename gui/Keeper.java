@@ -233,4 +233,7 @@ public class Keeper{
 		// TODO Auto-generated method stub
 		this.getXML(f);
 	}
+	public int getId() {
+		return id;
+	}
 }

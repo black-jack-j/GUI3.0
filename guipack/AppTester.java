@@ -112,6 +112,7 @@ public class AppTester {
 			public void territoryCreated(TerritoryAddEvent tae) {
 				// TODO Auto-generated method stub
 				territoryView.getViewer().refresh();
+				keepView.getViewer().refresh();
 			}
 
 			@Override
