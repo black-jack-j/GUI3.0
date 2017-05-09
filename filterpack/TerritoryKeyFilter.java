@@ -1,9 +1,8 @@
 package filterpack;
 
-import java.util.Map.Entry;
-
 import org.eclipse.jface.viewers.Viewer;
-import gui.Territory;
+
+import bdata.KPlace;
 
 public class TerritoryKeyFilter extends CustomFilter{
 	private String searchString;
@@ -14,7 +13,7 @@ public class TerritoryKeyFilter extends CustomFilter{
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (this.searchString==null||this.searchString.length()==0) return true;
-		Entry<String,Territory> entry = (Entry<String,Territory>)element;
+		KPlace entry = (KPlace)element;
 		return entry.getKey().matches(searchString);
 	}
 }

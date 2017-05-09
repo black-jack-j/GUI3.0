@@ -1,11 +1,10 @@
 package functions;
-import java.util.Map.Entry;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 
-import gui.Territory;
+import bdata.KPlace;
 
 public class KeeperNameEditingSupport extends EditingSupport{
 	private TableViewer viewer;
@@ -29,11 +28,11 @@ public class KeeperNameEditingSupport extends EditingSupport{
 	@Override
 	protected Object getValue(Object arg0) {
 		// TODO Auto-generated method stub
-		return ((Entry<String, Territory>)arg0).getValue().getName();
+		return ((KPlace)arg0).getName();
 	}
 	@Override
 	protected void setValue(Object arg0, Object arg1) {
-		if(!String.valueOf(arg1).trim().isEmpty())((Entry<String, Territory>)arg0).getValue().setName(String.valueOf(arg1));
+		if(!String.valueOf(arg1).trim().isEmpty())((KPlace)arg0).setName(String.valueOf(arg1));
 		viewer.update(arg0, null);
 	}
 }

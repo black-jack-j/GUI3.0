@@ -1,17 +1,15 @@
 package guipack;
 
-import java.util.Map.Entry;
-
 import org.eclipse.jface.viewers.Viewer;
 
-import gui.Territory;
+import bdata.KPlace;
 
 public class KeeperColumn extends ColumnComparator{
 	
 	@Override
 	public int compare(Viewer view, Object o1, Object o2){
-		Entry<String, Territory> entry1 = (Entry<String, Territory>) o1;
-		Entry<String, Territory> entry2 = (Entry<String, Territory>) o2;
+		KPlace entry1 = (KPlace)o1;
+		KPlace entry2 = (KPlace)o2;
 		int rc = 0;
  		switch(propertyIndex){
  		case 0:{
@@ -19,11 +17,11 @@ public class KeeperColumn extends ColumnComparator{
  			break;
  		}
  		case 1:{
- 			rc = compareStrings(entry1.getValue().getName(),entry2.getValue().getName());
+ 			rc = compareStrings(entry1.getName(),entry2.getName());
  			break;
  		}
  		case 2:{
- 			rc = compareNum(entry1.getValue().getSquare(),entry2.getValue().getSquare());
+ 			rc = compareNum(Double.parseDouble(entry1.getSquare()),Double.parseDouble(entry2.getSquare()));
  			break;
  		}
  		default : rc = 0;

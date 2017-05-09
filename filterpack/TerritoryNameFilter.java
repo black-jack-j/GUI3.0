@@ -3,7 +3,8 @@ package filterpack;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.Viewer;
-import gui.Territory;
+
+import bdata.KPlace;
 
 public class TerritoryNameFilter extends CustomFilter{
 	private String searchString;
@@ -18,8 +19,8 @@ public class TerritoryNameFilter extends CustomFilter{
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (this.searchString==null||this.searchString.length()==0) return true;
-		Entry<String,Territory> entry = (Entry<String,Territory>)element;
-		return entry.getValue().getName().matches(searchString);
+		KPlace entry = (KPlace)element;
+		return entry.getName().matches(searchString);
 	}
 
 }

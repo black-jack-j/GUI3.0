@@ -1,11 +1,9 @@
 package filterpack;
 
-import java.util.Map.Entry;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import gui.Territory;
+import bdata.KPlace;
 
 public class TerritorySizeFilter extends ViewerFilter{
 	private double searchSize;
@@ -34,8 +32,8 @@ public class TerritorySizeFilter extends ViewerFilter{
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		Entry<String,Territory> entry = (Entry<String,Territory>)element;
-		boolean b = entry.getValue().getSquare() > searchSize;
+		KPlace entry = (KPlace)element;
+		boolean b = Double.parseDouble(entry.getSquare()) > searchSize;
 		if (isGreater) return b;
 		else return !b;
 	}

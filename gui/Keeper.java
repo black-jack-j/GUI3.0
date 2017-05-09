@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,7 +26,7 @@ import org.jdom2.output.XMLOutputter;
 
 @Entity
 @NamedQuery(name="FindAll", query="SELECT k from Keeper k")
-public class Keeper{
+public class Keeper implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)

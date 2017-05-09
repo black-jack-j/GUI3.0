@@ -6,6 +6,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import bdata.KMap;
+import bdata.KPlace;
 import filterpack.TerritoryKeyFilter;
 import filterpack.TerritoryNameFilter;
 import filterpack.TerritorySizeFilter;
@@ -37,6 +39,8 @@ import org.eclipse.swt.events.MouseEvent;
 public class AppTester {
 	private Point minSize;
 	protected Shell shell;
+	protected TableProvider<KMap[]> maps;
+	protected TableProvider<KPlace[]> places;
 	private boolean isActiveFilter = false;
 	private Label editor;
 	private Label LInsert;

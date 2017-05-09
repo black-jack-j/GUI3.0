@@ -1,38 +1,18 @@
 package bdata;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-
-@Entity
 public class KPlace {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
-	private int id;
 	
 	private String name;
 	private String square;
+	private String key;
+	private int ownerId;
 	
-	@ManyToOne
-	private KMap iMap;
-	
-	public KMap getMap() {
-		return iMap;
+	public int getOwnerId() {
+		return ownerId;
 	}
 	
-	public void setMap(KMap map) {
-		this.iMap = map;
-	}
-	
-	public KPlace(){
-		
-	}
-	
-	public KPlace(String name, String square){
+	public KPlace(String key, String name, String square){
+		this.key = key;
 		this.setName(name);
 		this.setSquare(square);
 	}
@@ -44,5 +24,7 @@ public class KPlace {
 	public void setName(String name2) {this.name = name2;}
 
 	public String getName() {return name;}
+	
+	public String getKey(){return key;}
 
 }
