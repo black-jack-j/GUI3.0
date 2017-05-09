@@ -24,6 +24,10 @@ public class KMap {
 		return size;
 	}
 	
+	public void setSize(String size){
+		this.size = size;
+	}
+	
 	public int getId() {
 		return id;
 	}

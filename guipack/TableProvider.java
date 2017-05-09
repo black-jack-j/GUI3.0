@@ -3,6 +3,7 @@ package guipack;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -30,13 +31,13 @@ import org.eclipse.swt.widgets.Text;
 import filterpack.CustomFilter;
 import utilites.FormDataObject;
 
-public class TableProvider<T> {
+public class TableProvider {
 	private Composite header;
 	private Table table;
 	private TableViewer viewer;
 	private List<TableViewerColumn> cols;
-	private T input;
-	TableProvider(IStructuredContentProvider e, T o, Composite parent,int style){
+	private Object[] input;
+	TableProvider(ArrayContentProvider e, Object[] o, Composite parent,int style){
 		cols = new ArrayList<>();
 		viewer = new TableViewer(parent, style);
 		viewer.setContentProvider(e);
@@ -53,7 +54,7 @@ public class TableProvider<T> {
 		header = new Composite(parent,SWT.NONE);
 		header.setLayout(new FormLayout());
 	}
-	public TableProvider<T> addColumns(ColumnComparator comparators, ColumnLabelProvider[] providers,String[] names){
+	public TableProvider addColumns(ColumnComparator comparators, ColumnLabelProvider[] providers,String[] names){
 		addColumns(providers,names);
 		for(int i =0;i<names.length;i++){
 			cols.get(i).getColumn().addSelectionListener(getSelectionAdapter(comparators, cols.get(i), i));
@@ -61,21 +62,21 @@ public class TableProvider<T> {
 		viewer.setComparator(comparators);
 		return this;
 	}
-	public TableProvider<T> addColumns(ColumnComparator comparators, ColumnLabelProvider[] providers,String[] names, int...width){
+	public TableProvider addColumns(ColumnComparator comparators, ColumnLabelProvider[] providers,String[] names, int...width){
 		addColumns(comparators, providers,names,width);
 		for(int i =0;i<names.length;i++){
 			cols.get(i).getColumn().setWidth(width[i]);
 		}
 		return this;
 	}
-	public TableProvider<T> addColumns(ColumnLabelProvider[] providers, String[] names,int...width){
+	public TableProvider addColumns(ColumnLabelProvider[] providers, String[] names,int...width){
 		addColumns(providers,names);
 		for(int i =0;i<names.length;i++){
 			cols.get(i).getColumn().setWidth(width[i]);
 		}
 		return this;
 	}
-	public TableProvider<T> addColumns(ColumnLabelProvider[] providers, String[] names){
+	public TableProvider addColumns(ColumnLabelProvider[] providers, String[] names){
 		for(int i =0;i<names.length;i++){
 			TableViewerColumn col = new TableViewerColumn(viewer, SWT.NONE);
 			col.getColumn().setText(names[i]);
@@ -87,11 +88,11 @@ public class TableProvider<T> {
 		}
 		return this;
 	}
-	public TableProvider<T> setWidth(int index, int width){
+	public TableProvider setWidth(int index, int width){
 		if(index > 0 && index < cols.size()) cols.get(index).getColumn().setWidth(width);
 		return this;
 	}
-	public TableProvider<T> setWidth(int width){
+	public TableProvider setWidth(int width){
 		cols.forEach((TableViewerColumn tvc)-> tvc.getColumn().setWidth(width));
 		return this;
 	}
@@ -110,7 +111,7 @@ public class TableProvider<T> {
 		return selection;
 	}
 	
-	public TableProvider<T> setPretty(){
+	public TableProvider setPretty(){
 		FormData fd = (FormData) viewer.getTable().getParent().getLayoutData();
 		FormAttachment fR = fd.right;
 		FormAttachment fL = fd.left;
@@ -119,7 +120,7 @@ public class TableProvider<T> {
 		return this;
 	}
 	
-	public TableProvider<T> setSize(int widthP, int heightP){
+	public TableProvider setSize(int widthP, int heightP){
 		FormData fd = new FormData();
 		fd.left = new FormAttachment(0);
 		fd.right = new FormAttachment(widthP);
@@ -173,11 +174,11 @@ public class TableProvider<T> {
 		viewer.addFilter(f);
 	}
 	
-	public T getModel(){
+	public Object[] getModel(){
 		return input;
 	}
 	
-	public void setModel(T o){
+	public void setModel(Object[] o){
 		this.input = o;
 	}
 	public Table getTable(){

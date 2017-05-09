@@ -11,9 +11,19 @@ import bdata.KPlace;
 import filterpack.TerritoryKeyFilter;
 import filterpack.TerritoryNameFilter;
 import filterpack.TerritorySizeFilter;
+import functions.KeeperNameEditingSupport;
+import functions.KeeperSizeEditingSupport;
 import gui.*;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,8 +49,10 @@ import org.eclipse.swt.events.MouseEvent;
 public class AppTester {
 	private Point minSize;
 	protected Shell shell;
-	protected TableProvider<KMap[]> maps;
-	protected TableProvider<KPlace[]> places;
+	protected KMap[] mapModel;
+	protected KPlace[] placeModel;
+	protected TableProvider maps;
+	protected TableProvider places;
 	private boolean isActiveFilter = false;
 	private Label editor;
 	private Label LInsert;
@@ -84,6 +96,9 @@ public class AppTester {
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
+		
+		mapModel = new KMap[]{new KMap("Moscow")};
+		mapModel[0].setSize("140");
 		shell = new Shell();
 		
 		Composite mainScreen = new Composite(shell, SWT.NONE);
@@ -127,9 +142,41 @@ public class AppTester {
 		});
 		editor.setVisible(false);
 		//editor.setImage(new Image(Display.getCurrent(),"C:/users/fitisovdmtr/Documents/lab6styles/images/ArrowUp.png"));
+
+		
+		maps = new TableProvider(new ArrayContentProvider(), mapModel, rightTable, SWT.FULL_SELECTION);
+		ColumnLabelProvider[] providers = new ColumnLabelProvider[]{
+				new ColumnLabelProvider(){
+					public String getText(Object o){
+						KMap km = (KMap)o;
+						return km.getName();
+					}
+				},
+				new ColumnLabelProvider(){
+					public String getText(Object o){
+						KMap km = (KMap)o;
+						return km.getSize();
+					}
+				}
+		};
+		
+		maps.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 92);
+		
+		maps.getTable().addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent se){
+				
+			}
+		});
+		
 		
 		Menu mainMenu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(mainMenu);
+		
+		placeModel = new KPlace[]{new KPlace("Castle", "Kremlyn", "450"), new KPlace("Tower", "Ostankino", "40")};
+		
+		places = new TableProvider(new ArrayContentProvider(), placeModel,leftTable, SWT.FULL_SELECTION);
 		
 		filterWindow.setLayout(new FormLayout());
 		filterWindow.setBackground(new Color(Display.getCurrent(), 240, 240, 240));
@@ -141,6 +188,14 @@ public class AppTester {
 		Text keyFilter = FormDataObject.getFormedControl(15, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		keyFilter.setMessage("Filter by key...");
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
+		keyFilter.addModifyListener(new ModifyListener(){
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				tkf.setSearch(keyFilter.getText());
+				places.getViewer().refresh();
+			}
+
+		});
 		keyFilter.addControlListener(new ControlListener(){
 
 			@Override
@@ -161,6 +216,15 @@ public class AppTester {
 		
 		Text nameFilter = FormDataObject.getFormedControl(15, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
 		nameFilter.setMessage("Filter by name...");
+		nameFilter.addModifyListener(new ModifyListener(){
+
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				tnf.setSearch(nameFilter.getText());
+				places.getViewer().refresh();
+			}
+			
+		});
 		nameFilter.addControlListener(new ControlListener(){
 
 			@Override
@@ -186,6 +250,7 @@ public class AppTester {
 			@Override
 			public void modifyText(ModifyEvent arg0) {
 				tsf.setMeasure(sizeFilter.getText());
+				places.getViewer().refresh();
 			}
 			
 		});
@@ -224,11 +289,15 @@ public class AppTester {
 		
 		MenuItem mLoad = new MenuItem(menu_1, SWT.NONE);
 		mLoad.setText("Open...");
+		mLoad.addSelectionListener(new SelectionAdapter(){
+			
+			public void widgetSelected(SelectionEvent se){
+				
+			}
+		});
+		
 		MenuItem mntmSave = new MenuItem(menu_1, SWT.NONE);
 		mntmSave.setText("Save");
-		
-		MenuItem mntmSaveAs = new MenuItem(menu_1, SWT.NONE);
-		mntmSaveAs.setText("Save As...");
 		
 		MenuItem mExit = new MenuItem(menu_1, SWT.NONE);
 		mExit.setText("Exit");
@@ -246,6 +315,16 @@ public class AppTester {
 				shell.dispose();
 			}
 		});
+		
+		maps.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent arg0) {
+				
+			}
+			
+		});
+		
 		LFilter.addMouseListener(new MouseAdapter() {
 			
 			@Override
@@ -256,17 +335,143 @@ public class AppTester {
 				
 				if (isActiveFilter){
 					fd.top = new FormAttachment(filterWindow);
+					places.getViewer().removeFilter(tsf);
+					places.getViewer().removeFilter(tnf);
+					places.getViewer().removeFilter(tkf);
 					tmp.bottom = new FormAttachment(1);
 					isActiveFilter = false;
 				}else{
 					fd.top = new FormAttachment(filterWindow,10);
+					places.getViewer().addFilter(tkf);
+					places.getViewer().addFilter(tnf);
+					places.getViewer().addFilter(tsf);
 					tmp.bottom = new FormAttachment(30);
 					isActiveFilter = true;
 				}
+				places.getViewer().refresh();
 				rightTable.setLayoutData(fd);
 				filterWindow.setLayoutData(tmp);
 				mainScreen.layout();
 			}
 		});
+		
+		providers = new ColumnLabelProvider[]{
+			new ColumnLabelProvider(){
+				@Override
+				public String getText(Object o){
+					KPlace entry = (KPlace) o;
+					return entry.getKey();
+				}
+			},
+			new ColumnLabelProvider(){
+				@Override
+				public String getText(Object o){
+					KPlace entry = (KPlace) o;
+					return entry.getName();
+				}
+			},
+			new ColumnLabelProvider(){
+				@Override
+				public String getText(Object o){
+					KPlace entry = (KPlace) o;
+					return entry.getSquare();
+				}
+			}
+		};
+		
+		places.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
+		places.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
+		maps.getHeader().setBackground(new Color(Display.getCurrent(),103,157,246));
+		//maps.addSearch(new KeeperFilter());
+		
+		places.getTable().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				IStructuredSelection selection = places.getViewer().getStructuredSelection();
+				if (!selection.isEmpty()){
+					if(e.button==3){
+						Menu terConMenu = new Menu(places.getTable());
+						MenuItem mDelete = new MenuItem(terConMenu,SWT.NONE);
+						MenuItem mDeleteLower = new MenuItem(terConMenu,SWT.NONE);
+						mDeleteLower.setText("delete lower");
+						mDelete.setText("delete");
+						places.getTable().setMenu(terConMenu);
+						mDelete.addSelectionListener(new SelectionAdapter(){
+							
+							@Override
+							public void widgetSelected(SelectionEvent arg0) {
+								
+							}
+							
+						});
+						mDeleteLower.addSelectionListener(new SelectionAdapter(){
+							
+							@Override
+							public void widgetSelected(SelectionEvent arg0) {
+								
+							}
+							
+						});
+					}
+				}
+			}
+		});
+		
+		Shell browser = new Shell(SWT.DIALOG_TRIM  & (~SWT.RESIZE));
+		browser.setLayout(new FillLayout());
+		Browser bros = new Browser(browser,SWT.NONE);
+		
+		maps.getTable().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				IStructuredSelection selection1 = (IStructuredSelection) maps.getViewer().getSelection();
+				KMap n1 = (KMap) selection1.getFirstElement();
+				if (!selection1.isEmpty()){
+					if(e.button==3){
+						Menu keepConMenu = new Menu(maps.getTable());
+						MenuItem edit = new MenuItem(keepConMenu,SWT.NONE);
+						MenuItem save = new MenuItem(keepConMenu,SWT.NONE);
+						MenuItem delete = new MenuItem(keepConMenu,SWT.NONE);
+						edit.setText("Edit");
+						save.setText("Save");
+						delete.setText("Delete");
+						maps.getTable().setMenu(keepConMenu);
+						save.addSelectionListener(new SelectionAdapter(){
+							public void widgetSelected(SelectionEvent se){
+								
+							}
+						});
+						delete.addSelectionListener(new SelectionAdapter(){
+							
+							public void widgetSelected(SelectionEvent se){
+								
+							}
+						});
+					}
+				}
+			}
+		});
+		
+		maps.getViewer().addDoubleClickListener(new IDoubleClickListener(){
+
+			@Override
+			public void doubleClick(DoubleClickEvent arg0) {
+				IStructuredSelection s = (IStructuredSelection) arg0.getSelection();
+				if(!s.isEmpty()) {
+					bros.setUrl("http://maps.google.com/?q="+((KMap)s.getFirstElement()).getName());
+					System.out.println(bros.getUrl());
+					if (browser.isDisposed()){
+						browser.setSize(640, 480);
+						browser.open();
+					}else if(browser.isVisible()){
+						bros.refresh();
+					}
+				}
+			}
+			
+		});
+		places.getColumn(1).setEditingSupport(new KeeperNameEditingSupport(places.getViewer()));
+		places.getColumn(2).setEditingSupport(new KeeperSizeEditingSupport(places.getViewer()));
+		maps.getViewer().refresh();
 	}
 }
