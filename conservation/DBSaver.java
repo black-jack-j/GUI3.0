@@ -9,7 +9,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 
 import gui.Keeper;
-import gui.KeeperController;
 
 public class DBSaver implements Watchdog{
 	private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("maps");

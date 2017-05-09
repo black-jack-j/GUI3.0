@@ -12,12 +12,9 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import kevents.*;
-
 public class KeeperInc {
 	private Text FName;
-	private KeeperController control;
-	public KeeperInc(Shell parent, KeeperController tmp){
+	public KeeperInc(Shell parent){
 		Shell window = new Shell(parent, SWT.DIALOG_TRIM|SWT.APPLICATION_MODAL&(~SWT.RESIZE));
 		window.setSize(400, 200);
 		
@@ -35,7 +32,6 @@ public class KeeperInc {
 		instruction.setBounds(110, 50, 150, 15);
 		instruction.setVisible(true);
 
-		control = tmp;
 		FName = new Text(window, SWT.BORDER);
 		FName.setBounds(110, 74, 174, 31);
 		FName.setText("");
@@ -52,9 +48,6 @@ public class KeeperInc {
 			public void widgetSelected(SelectionEvent e) {
 				if (FName.getText().trim().isEmpty()) { }
 				else {
-					KeeperAddEvent kae = new KeeperAddEvent(e,FName.getText());
-					kae.m = KeeperAddEvent.Mode.create;
-					control.keeperCreated(kae);
 					window.dispose();
 				}
 			}

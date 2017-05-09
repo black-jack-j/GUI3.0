@@ -8,8 +8,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import tevents.TerritoryAddEvent;
-
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,7 +18,7 @@ public class AddShell {
 	private Text keyField;
 	private Text nameField;
 	private Text sizeField;
-	public AddShell(Note km, Shell parent, int width, int height){
+	public AddShell(Shell parent, int width, int height){
 		Shell dialog = new Shell(parent, SWT.DIALOG_TRIM| SWT.APPLICATION_MODAL);
 		List<Label> list = new ArrayList<>();
 		dialog.setSize(400, 210);
@@ -138,8 +136,6 @@ public class AddShell {
 					if (sizeFail.isVisible()|sizeField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(sizeFail, sizeField);
 					String s = sizeField.getText().replace(',', '.');
 					double square = Double.parseDouble(s);
-					km.getKeep().addComponent(keyField.getText(), new Territory(nameField.getText(),square));
-					km.territoryCreated(new TerritoryAddEvent(e));
 					dialog.dispose();
 				}catch(IncorrectFieldValueException ifv){
 					ifv.setMessage("incorrect value");

@@ -1,31 +1,14 @@
 package guipack;
 
-import kevents.*;
-import tevents.TerritoryAddEvent;
-import tevents.TerritoryListener;
-import tevents.TerritoryRemoveEvent;
 import utilites.FormDataObject;
 
-import java.io.IOException;
-import java.util.Map.Entry;
-
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import filterpack.KeeperFilter;
 import filterpack.TerritoryKeyFilter;
 import filterpack.TerritoryNameFilter;
 import filterpack.TerritorySizeFilter;
-import functions.KeeperNameEditingSupport;
-import functions.KeeperSizeEditingSupport;
 import gui.*;
 
 import org.eclipse.swt.SWT;
@@ -50,21 +33,14 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.browser.Browser;
 
 public class AppTester {
-	private TableProvider<KeeperController> keepView;
-	private TableProvider<Note> territoryView;
-	private KeeperController model;
 	private Point minSize;
 	protected Shell shell;
-	private Note keepModel;
 	private boolean isActiveFilter = false;
 	private Label editor;
 	private Label LInsert;
 	private Label LFilter;
-	private Label Search;
-
 	Device dev = Display.getCurrent();
 	Color deepGrey = new Color(dev,81,81,81);
 	Color white = new Color(dev,255,255,255);
@@ -98,75 +74,12 @@ public class AppTester {
 				display.sleep();
 			}
 		}
-		model.close();
 	}
 
 	/**
 	 * Create contents of the window.
 	 */
 	protected void createContents() {
-		
-		TerritoryListener tmp = new TerritoryListener(){
-
-			@Override
-			public void territoryCreated(TerritoryAddEvent tae) {
-				// TODO Auto-generated method stub
-				territoryView.getViewer().refresh();
-				keepView.getViewer().refresh();
-			}
-
-			@Override
-			public void territoryRemoved(TerritoryRemoveEvent tre) {
-				// TODO Auto-generated method stub
-				territoryView.getViewer().refresh();
-			}
-			
-		};
-		
-		try {
-			model = new KeeperController("C:/users/fitisovdmtr/lab/config.xml", tmp);
-		} catch (IOException e) {
-			System.out.println("failed to connect to config file");
-			e.printStackTrace();
-		}
-		model.addKeeperListener(new KeeperListener(){
-
-			@Override
-			public void keeperCreated(KeeperAddEvent kae) {
-				switch(kae.m){
-				case create:{
-					model.addKeeper(kae.getMessage(), tmp);
-					break;
-				}
-				case load:{
-					model.loadKeeper(kae.getMessage(),tmp);
-					break;
-				}
-				default: break;
-			}
-				keepView.getViewer().refresh();
-				territoryView.getViewer().refresh();
-		}
-
-			@Override
-			public void keeperReaded(KeeperSelectionEvent kse) {
-				territoryView.getViewer().setInput(kse.getNote());
-				territoryView.getViewer().refresh();
-				keepView.getViewer().refresh();
-			}
-
-			@Override
-			public void keeperUpdated(KeeperRefreshEvent kre) {
-				territoryView.getViewer().refresh();
-				keepView.getViewer().refresh();
-			}
-
-			@Override
-			public void keeperDeleted(KeeperRemoveEvent kre) {
-				keepView.getViewer().refresh();
-			}
-			
-		});
 		shell = new Shell();
 		
 		Composite mainScreen = new Composite(shell, SWT.NONE);
@@ -195,7 +108,7 @@ public class AppTester {
 		LInsert.setBackground(darkGrey);
 		LInsert.addMouseListener(new MouseAdapter(){
 			public void mouseDown(MouseEvent e){
-				AddShell form = new AddShell(keepModel, shell, 400, 200);
+				AddShell form = new AddShell(shell, 400, 200);
 			}
 		});
 		LInsert.setVisible(false);
@@ -210,42 +123,9 @@ public class AppTester {
 		});
 		editor.setVisible(false);
 		//editor.setImage(new Image(Display.getCurrent(),"C:/users/fitisovdmtr/Documents/lab6styles/images/ArrowUp.png"));
-
-		
-		keepView = new TableProvider<KeeperController>(new KeeperContentProvider(), model, rightTable, SWT.FULL_SELECTION);
-		ColumnLabelProvider[] providers = new ColumnLabelProvider[]{
-				new ColumnLabelProvider(){
-					public String getText(Object o){
-						Note km = (Note) o;
-						return km.getKeep().getName();
-					}
-				},
-				new ColumnLabelProvider(){
-					public String getText(Object o){
-						Note km = (Note) o;
-						return String.valueOf(km.getKeep().getSize());
-					}
-				}
-		};
-		
-		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 92);
-		
-		keepView.getTable().addSelectionListener(new SelectionAdapter(){
-
-			@Override
-			public void widgetSelected(SelectionEvent se){
-				IStructuredSelection s = keepView.getViewer().getStructuredSelection();
-				Note n = (Note)s.getFirstElement();
-				KeeperSelectionEvent kse = new KeeperSelectionEvent(se, n);
-				model.keeperReaded(kse);
-			}
-		});
-		
 		
 		Menu mainMenu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(mainMenu);
-
-		territoryView = new TableProvider<Note>(new KeepContentProvider(),null,leftTable, SWT.FULL_SELECTION);
 		
 		filterWindow.setLayout(new FormLayout());
 		filterWindow.setBackground(new Color(Display.getCurrent(), 240, 240, 240));
@@ -257,14 +137,6 @@ public class AppTester {
 		Text keyFilter = FormDataObject.getFormedControl(15, 20, 85, 33, Text.class, filterWindow, SWT.NONE);
 		keyFilter.setMessage("Filter by key...");
 		TerritoryKeyFilter tkf = new TerritoryKeyFilter();
-		keyFilter.addModifyListener(new ModifyListener(){
-			@Override
-			public void modifyText(ModifyEvent arg0) {
-				tkf.setSearch(keyFilter.getText());
-				territoryView.getViewer().refresh();
-			}
-
-		});
 		keyFilter.addControlListener(new ControlListener(){
 
 			@Override
@@ -285,15 +157,6 @@ public class AppTester {
 		
 		Text nameFilter = FormDataObject.getFormedControl(15, 35, 85, 48, Text.class, filterWindow, SWT.NONE);
 		nameFilter.setMessage("Filter by name...");
-		nameFilter.addModifyListener(new ModifyListener(){
-
-			@Override
-			public void modifyText(ModifyEvent arg0) {
-				tnf.setSearch(nameFilter.getText());
-				territoryView.getViewer().refresh();
-			}
-			
-		});
 		nameFilter.addControlListener(new ControlListener(){
 
 			@Override
@@ -319,7 +182,6 @@ public class AppTester {
 			@Override
 			public void modifyText(ModifyEvent arg0) {
 				tsf.setMeasure(sizeFilter.getText());
-				territoryView.getViewer().refresh();
 			}
 			
 		});
@@ -351,28 +213,13 @@ public class AppTester {
 		mNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				KeeperInc tmp = new KeeperInc(shell, model);
+				KeeperInc tmp = new KeeperInc(shell);
 			}
 		});
 		mNew.setText("New");
 		
 		MenuItem mLoad = new MenuItem(menu_1, SWT.NONE);
 		mLoad.setText("Open...");
-		mLoad.addSelectionListener(new SelectionAdapter(){
-			
-			public void widgetSelected(SelectionEvent se){
-				FileDialog f = new FileDialog(shell);
-				f.setFilterExtensions(new String[]{"*.xml"});
-				f.open();
-				if (!f.getFileName().isEmpty()){
-					String s = f.getFilterPath()+"\\"+f.getFileName();
-					KeeperAddEvent kae = new KeeperAddEvent(se,s);
-					kae.m = KeeperAddEvent.Mode.load;
-					model.keeperCreated(kae);
-				}
-			}
-		});
-		
 		MenuItem mntmSave = new MenuItem(menu_1, SWT.NONE);
 		mntmSave.setText("Save");
 		
@@ -395,20 +242,6 @@ public class AppTester {
 				shell.dispose();
 			}
 		});
-		
-		keepView.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent arg0) {
-				IStructuredSelection selection = (IStructuredSelection)arg0.getSelection();
-				keepModel = (Note)selection.getFirstElement();
-				territoryView.getViewer().setInput(keepModel);
-				keepView.getViewer().refresh();
-				editor.setVisible(true);
-			}
-			
-		});
-		
 		LFilter.addMouseListener(new MouseAdapter() {
 			
 			@Override
@@ -419,168 +252,17 @@ public class AppTester {
 				
 				if (isActiveFilter){
 					fd.top = new FormAttachment(filterWindow);
-					territoryView.getViewer().removeFilter(tsf);
-					territoryView.getViewer().removeFilter(tnf);
-					territoryView.getViewer().removeFilter(tkf);
 					tmp.bottom = new FormAttachment(1);
 					isActiveFilter = false;
 				}else{
 					fd.top = new FormAttachment(filterWindow,10);
-					territoryView.getViewer().addFilter(tkf);
-					territoryView.getViewer().addFilter(tnf);
-					territoryView.getViewer().addFilter(tsf);
 					tmp.bottom = new FormAttachment(30);
 					isActiveFilter = true;
 				}
-				territoryView.getViewer().refresh();
 				rightTable.setLayoutData(fd);
 				filterWindow.setLayoutData(tmp);
 				mainScreen.layout();
 			}
 		});
-		
-		providers = new ColumnLabelProvider[]{
-			new ColumnLabelProvider(){
-				@Override
-				public String getText(Object o){
-					Entry<String,Territory> entry = (Entry<String, Territory>)o;
-					return entry.getKey();
-				}
-			},
-			new ColumnLabelProvider(){
-				@Override
-				public String getText(Object o){
-					Entry<String,Territory> entry = (Entry<String, Territory>)o;
-					return entry.getValue().getName();
-				}
-			},
-			new ColumnLabelProvider(){
-				@Override
-				public String getText(Object o){
-					Entry<String,Territory> entry = (Entry<String, Territory>)o;
-					return String.valueOf(entry.getValue().getSquare());
-				}
-			}
-		};
-		
-		territoryView.addColumns(new KeeperColumn(),providers, new String[]{"key", "name", "square"}).setPretty().setSize(100, 94);
-		territoryView.getHeader().setBackground(new Color(Display.getCurrent(),0,0,0));
-		keepView.getHeader().setBackground(new Color(Display.getCurrent(),103,157,246));
-		keepView.addSearch(new KeeperFilter());
-		
-		territoryView.getTable().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				IStructuredSelection selection = territoryView.getViewer().getStructuredSelection();
-				if (!selection.isEmpty()){
-					if(e.button==3){
-						Menu terConMenu = new Menu(territoryView.getTable());
-						MenuItem mDelete = new MenuItem(terConMenu,SWT.NONE);
-						MenuItem mDeleteLower = new MenuItem(terConMenu,SWT.NONE);
-						mDeleteLower.setText("delete lower");
-						mDelete.setText("delete");
-						territoryView.getTable().setMenu(terConMenu);
-						mDelete.addSelectionListener(new SelectionAdapter(){
-							
-							@Override
-							public void widgetSelected(SelectionEvent arg0) {
-								String s = ((Entry<String,Territory>) (selection.getFirstElement())).getKey();	
-								keepModel.getKeep().removeComponent(s);
-								KeeperRefreshEvent kre = new KeeperRefreshEvent(arg0);
-								model.keeperUpdated(kre);
-							}
-							
-						});
-						mDeleteLower.addSelectionListener(new SelectionAdapter(){
-							
-							@Override
-							public void widgetSelected(SelectionEvent arg0) {
-								Double tmp = ((Entry<String,Territory>) (selection.getFirstElement())).getValue().getSquare();	
-								keepModel.getKeep().removeLower(new Territory("",tmp));
-								KeeperRefreshEvent kre = new KeeperRefreshEvent(arg0);
-								model.keeperUpdated(kre);
-							}
-							
-						});
-					}
-				}
-			}
-		});
-		
-		Shell browser = new Shell(SWT.DIALOG_TRIM  & (~SWT.RESIZE));
-		browser.setLayout(new FillLayout());
-		Browser bros = new Browser(browser,SWT.NONE);
-		
-		keepView.getTable().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				IStructuredSelection selection1 = (IStructuredSelection) keepView.getViewer().getSelection();
-				Note n1 = (Note) selection1.getFirstElement();
-				if (!selection1.isEmpty()){
-					if(e.button==3){
-						Menu keepConMenu = new Menu(keepView.getTable());
-						MenuItem edit = new MenuItem(keepConMenu,SWT.NONE);
-						MenuItem save = new MenuItem(keepConMenu,SWT.NONE);
-						MenuItem saveAs = new MenuItem(keepConMenu,SWT.NONE);
-						MenuItem delete = new MenuItem(keepConMenu,SWT.NONE);
-						edit.setText("Edit");
-						save.setText("Save");
-						saveAs.setText("Save As...");
-						delete.setText("Delete");
-						keepView.getTable().setMenu(keepConMenu);
-						save.addSelectionListener(new SelectionAdapter(){
-							public void widgetSelected(SelectionEvent se){
-								Note tmp = ((Note)selection1.getFirstElement());
-								tmp.save();
-								System.out.println("File \"" + tmp.getKeep().getName() + "\" was saved at " + tmp.getPath().toString());
-							}
-						});
-						saveAs.addSelectionListener(new SelectionAdapter(){
-							
-							public void widgetSelected(SelectionEvent se){
-								FileDialog f = new FileDialog(shell);
-								f.setFilterExtensions(new String[]{"*.xml"});
-								f.open();
-								String s = f.getFilterPath()+"\\" + f.getFileName();
-								if (!s.endsWith(".xml")) s+=".xml";
-								Note tmp = ((Note)selection1.getFirstElement());
-								model.markPath(s, tmp);
-							}
-						});
-						delete.addSelectionListener(new SelectionAdapter(){
-							
-							public void widgetSelected(SelectionEvent se){
-								model.removeNote((Note)selection1.getFirstElement());
-								model.keeperDeleted(new KeeperRemoveEvent(se));
-								keepView.getTable().deselectAll();
-								
-							}
-						});
-					}
-				}
-			}
-		});
-		
-		keepView.getViewer().addDoubleClickListener(new IDoubleClickListener(){
-
-			@Override
-			public void doubleClick(DoubleClickEvent arg0) {
-				IStructuredSelection s = (IStructuredSelection) arg0.getSelection();
-				if(!s.isEmpty()) {
-					bros.setUrl("http://maps.google.com/?q="+((Note)s.getFirstElement()).getKeep().getName());
-					System.out.println(bros.getUrl());
-					if (browser.isDisposed()){
-						browser.setSize(640, 480);
-						browser.open();
-					}else if(browser.isVisible()){
-						bros.refresh();
-					}
-				}
-			}
-			
-		});
-		territoryView.getColumn(1).setEditingSupport(new KeeperNameEditingSupport(territoryView.getViewer()));
-		territoryView.getColumn(2).setEditingSupport(new KeeperSizeEditingSupport(territoryView.getViewer()));
-		keepView.getViewer().refresh();
 	}
 }
