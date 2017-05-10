@@ -8,10 +8,6 @@ public class KMap {
 	
 	private String size;
 	
-	public KMap(){
-		
-	}
-	
 	public KMap(String name){
 		this.setName(name);
 	}
