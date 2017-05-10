@@ -16,7 +16,7 @@ public class TerritoryDeleteCommand extends BDKCommand {
 	@Override
 	public void execute() {
 		try {
-			PreparedStatement statement = connection.prepareStatement("DELETE FROM TERRITORIES WHERE ID LIKE ? AND MAP_ID = ?");
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM TERRITORIES WHERE ID LIKE ? AND MAP_ID = ? ;");
 			statement.setString(1, key);
 			statement.setInt(2, mapId);
 			statement.execute();

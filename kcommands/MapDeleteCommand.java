@@ -15,7 +15,7 @@ public class MapDeleteCommand extends BDKCommand {
 	@Override
 	public void execute() {
 		try {
-			PreparedStatement statement = connection.prepareStatement("DELETE FROM MAPS WHERE ID = ?");
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM MAPS WHERE ID = ?;");
 			statement.setInt(1, id);
 			statement.execute();
 			//new command 

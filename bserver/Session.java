@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import kcommands.DeregisterCommand;
 import kcommands.HandlerCommand;
 import kcommands.KCommand;
 
@@ -50,7 +51,7 @@ public class Session {
 	}
 	
 	public void deregister(){
-		handler.query(null);
+		handler.query(new DeregisterCommand(this, 10));  //client disconnected - no more updates for his terminal
 	}
 	
 	public void update(KCommand command){
