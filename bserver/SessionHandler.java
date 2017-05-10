@@ -27,11 +27,11 @@ public class SessionHandler {
 		t.start();
 	}
 	
-	public void addListener(Session client){
+	public synchronized void addListener(Session client){
 		listeners.add(client);
 	}
 	
-	public void removeListener(Session client){
+	public synchronized void removeListener(Session client){
 		listeners.remove(client);
 	}
 	

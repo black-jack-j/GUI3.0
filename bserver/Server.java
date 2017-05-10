@@ -9,14 +9,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
 	private CopyOnWriteArrayList<SessionHandler> handlers;
-	private List<Socket> sockets;
 	private final int port;
 	private ServerSocket server;
 	
 	public Server(int p){
 		port = p;
 		handlers = new CopyOnWriteArrayList<>();
-		sockets = new ArrayList<>();
 		try {
 			server = new ServerSocket(p);
 		} catch (IOException e) {
@@ -41,7 +39,6 @@ public class Server {
 				Socket socket = server.accept();
 				SessionHandler s = createSession(1);
 				Session session = new Session(socket, s);
-				sockets.add(socket);
 				session.initConnection();
 				Thread t = new Thread(new Runnable(){
 

@@ -1,13 +1,19 @@
 package kcommands;
 
-public abstract class ClientCommand extends KCommand {
+import org.eclipse.jface.viewers.TableViewer;
 
+public abstract class ClientCommand extends KCommand {
+	
+	protected TableViewer viewer;
+	
 	public ClientCommand(int priority) {
 		super(priority);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public abstract void execute();
-
+	
+	public void setViewer(TableViewer viewer){
+		this.viewer = viewer;
+	}
 }
