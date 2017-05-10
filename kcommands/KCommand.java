@@ -11,9 +11,11 @@ public abstract class KCommand implements Comparable<KCommand>, Serializable {
 	
 	@Override
 	public int compareTo(KCommand arg0) {
-		return this.priority-arg0.getPriority();
+		return (this.priority-arg0.getPriority());
 	}
 	public int getPriority(){
 		return this.priority;
 	}
+	
+	public abstract void execute();
 }
