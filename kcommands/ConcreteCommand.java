@@ -10,5 +10,4 @@ public class ConcreteCommand extends KCommand {
 	public void execute() {
 		System.out.println("My priority is #"+this.getPriority());
 	}
-
 }

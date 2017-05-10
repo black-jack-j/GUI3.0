@@ -1,5 +1,7 @@
 package guipack;
 
+import kcommands.ConcreteCommand;
+import kcommands.KCommand;
 import utilites.FormDataObject;
 
 import org.eclipse.swt.widgets.Display;
@@ -46,6 +48,9 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
+import java.io.*;
+import java.net.*;
+
 public class AppTester {
 	private Point minSize;
 	protected Shell shell;
@@ -63,7 +68,7 @@ public class AppTester {
 	Color lightGrey = new Color(dev,121,121,121);
 	Color darkWhite = new Color(dev,148,148,148);
 	Color darkGrey = new Color(dev,107,107,107);
-	
+
 	/**
 	 * Launch the application.
 	 * @param args
@@ -71,7 +76,18 @@ public class AppTester {
 	public static void main(String[] args) {
 		try {
 			AppTester window = new AppTester();
-			window.open();
+			//window.open();
+			ClientToServer client = new ClientToServer();
+			client.Connect(InetAddress.getByName("127.0.0.1"), 9999);
+			Thread t = new ThreadToRead(client);
+			KCommand k = new ConcreteCommand(1);
+			Thread t1 = new ThreadToWrite(client, ClientToServer.ObjectToString(k));
+			Thread t2 = new ThreadToWrite(client, "quit");
+
+			t.start();
+			t1.start();
+			t2.start();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
