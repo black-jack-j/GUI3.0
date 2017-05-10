@@ -3,16 +3,20 @@ package bserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
 	private CopyOnWriteArrayList<SessionHandler> handlers;
+	private List<Socket> sockets;
 	private final int port;
 	private ServerSocket server;
 	
 	public Server(int p){
 		port = p;
 		handlers = new CopyOnWriteArrayList<>();
+		sockets = new ArrayList<>();
 		try {
 			server = new ServerSocket(p);
 		} catch (IOException e) {
@@ -32,23 +36,27 @@ public class Server {
 		handlers.forEach((SessionHandler s)->System.out.println(s.getId()));
 	}
 	public void start(){
-		Thread t = new Thread(new Runnable(){
+		while(true){
+			try {
+				Socket socket = server.accept();
+				SessionHandler s = createSession(1);
+				Session session = new Session(socket, s);
+				sockets.add(socket);
+				session.initConnection();
+				Thread t = new Thread(new Runnable(){
 
-			@Override
-			public void run() {
-				try {
-					Socket socket = server.accept();
-					SessionHandler s = createSession(1);
-					Session session = new Session(socket, s);
-					session.connect();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					@Override
+					public void run() {
+						session.connect();
+					}
+					
+				});
+				t.start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-		});
-		t.start();
+		}
 	}
 	public static void main(String[] args){
 		Server s = new Server(1488);

@@ -1,6 +1,5 @@
 package guipack;
 
-import kcommands.ConcreteCommand;
 import kcommands.KCommand;
 import utilites.FormDataObject;
 
@@ -48,10 +47,10 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
-import java.io.*;
-import java.net.*;
+import java.util.concurrent.BlockingQueue;
 
 public class AppTester {
+	private BlockingQueue<KCommand> pipe;
 	private Point minSize;
 	protected Shell shell;
 	protected KMap[] mapModel;
@@ -76,18 +75,8 @@ public class AppTester {
 	public static void main(String[] args) {
 		try {
 			AppTester window = new AppTester();
-			//window.open();
-			ClientToServer client = new ClientToServer();
-			client.Connect(InetAddress.getByName("127.0.0.1"), 9999);
-			Thread t = new ThreadToRead(client);
-			KCommand k = new ConcreteCommand(1);
-			Thread t1 = new ThreadToWrite(client, ClientToServer.ObjectToString(k));
-			Thread t2 = new ThreadToWrite(client, "quit");
-
-			t.start();
-			t1.start();
-			t2.start();
-
+			window.open();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

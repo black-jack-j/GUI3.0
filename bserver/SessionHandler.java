@@ -1,22 +1,30 @@
 package bserver;
 
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import kcommands.HandlerCommand;
 import kcommands.KCommand;
-import kcommands.ReplyCommand;
 
 public class SessionHandler {
 	private int id;
 	private Server server;
-	private PriorityBlockingQueue<KCommand> pipe;
+	private PriorityBlockingQueue<HandlerCommand> pipe;
 	private CopyOnWriteArrayList<Session> listeners;
 	
 	public SessionHandler(int id){
 		this.id = id;
-		pipe = new PriorityBlockingQueue<KCommand>();
+		pipe = new PriorityBlockingQueue<HandlerCommand>();
 		listeners = new CopyOnWriteArrayList<>();
+		Thread t = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				work();
+			}
+			
+		});
+		t.start();
 	}
 	
 	public void addListener(Session client){
@@ -44,7 +52,7 @@ public class SessionHandler {
 		if (listeners.indexOf(s)!=-1) s.update(command);
 	}
 	
-	public void query(KCommand command){
+	public void query(HandlerCommand command){
 		this.pipe.add(command);
 	}
 	public int getId(){
@@ -58,15 +66,7 @@ public class SessionHandler {
 	
 	public void work(){
 		while(true){
-			try {
-				KCommand command = pipe.take();
-				command.execute();
-				KCommand reply = new ReplyCommand(1);
-				notifyListeners(reply);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//следит за добавлением команд в очередь
 		}
 	}
 }
