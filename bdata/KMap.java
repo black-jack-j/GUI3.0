@@ -8,8 +8,15 @@ public class KMap {
 	
 	private String size;
 	
-	public KMap(String name){
+	public KMap(String name, int id){
 		this.setName(name);
+		this.id = id;
+	}
+	
+	public KMap(String name, int id, String size){
+		size = String.valueOf(size);
+		this.setName(name);
+		this.id = id;
 	}
 	
 	public void setName(String name){this.name = name;}

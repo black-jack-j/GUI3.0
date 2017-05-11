@@ -20,7 +20,10 @@ public class TerritoryDeleteCommand extends BDKCommand {
 			statement.setString(1, key);
 			statement.setInt(2, mapId);
 			statement.execute();
-			//new command 
+			OpenTerritoriesCommand otc = new OpenTerritoriesCommand(mapId, 0);
+			otc.setHandler(handler);
+			otc.setConnection(connection);
+			otc.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,7 +1,12 @@
 package kcommands;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import bdata.KMap;
 
 public class MapAddCommand extends BDKCommand {
 	
@@ -21,7 +26,10 @@ public class MapAddCommand extends BDKCommand {
 			statement.setInt(1, ownerId);
 			statement.setString(2, name);
 			statement.execute();
-			//new command 
+			OpenMapCommand omc = new OpenMapCommand(ownerId, 0);
+			omc.setHandler(handler);
+			omc.setConnection(connection);
+			omc.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

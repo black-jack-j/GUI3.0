@@ -1,9 +1,5 @@
 package bserver;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -13,13 +9,13 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import kcommands.ClientCommand;
 import kcommands.DeregisterCommand;
 import kcommands.HandlerCommand;
-import kcommands.KCommand;
 
 public class Session {
 	private SessionHandler handler;
-	private BlockingQueue<KCommand> pipe;
+	private BlockingQueue<ClientCommand> pipe;
 	private InputStream in;
 	private OutputStream out;
 	private Socket socket;
@@ -28,7 +24,7 @@ public class Session {
 		handler = sh;
 		handler.addListener(this);
 		socket = s;
-		pipe = new LinkedBlockingQueue<KCommand>();
+		pipe = new LinkedBlockingQueue<ClientCommand>();
 	}
 
 	public void initConnection() {
@@ -54,29 +50,17 @@ public class Session {
 		handler.query(new DeregisterCommand(this, 10));  //client disconnected - no more updates for his terminal
 	}
 	
-	public void update(KCommand command){
-		/**try(ObjectOutputStream oos = new ObjectOutputStream(out)) {
-			oos.reset();
-			oos.writeObject(oos);
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-			deregister();
-		}**/
+	public void update(ClientCommand command){
 		pipe.add(command);
 	}
 	
 	public void send(){
 		try {
 			while(true){
-				KCommand reply = pipe.take();
-				ByteArrayOutputStream bytearr = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(bytearr);
+				ClientCommand reply = pipe.take();
+				ObjectOutputStream oos = new ObjectOutputStream(out);
 				oos.writeObject(reply);
-				String s = bytearr.toString();
-				DataOutputStream dos = new DataOutputStream(out);
-				dos.writeUTF(s);
-				dos.flush();
+				oos.flush();
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -84,6 +68,7 @@ public class Session {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			deregister();
 		}
 	}
 	
@@ -92,15 +77,10 @@ public class Session {
 			
 			@Override
 			public void run() {
-				DataInputStream input = new DataInputStream(in);
-				String s = null;
 				try{
+					ObjectInputStream input = new ObjectInputStream(in);
 					while(true){
-						s = input.readUTF();
-						byte[] array = s.getBytes();
-						ByteArrayInputStream basi = new ByteArrayInputStream(array);
-						ObjectInputStream ois = new ObjectInputStream(basi);
-						HandlerCommand command = (HandlerCommand) ois.readObject();
+						HandlerCommand command = (HandlerCommand) input .readObject();
 						handler.query(command);
 					}
 				} catch (IOException e) {

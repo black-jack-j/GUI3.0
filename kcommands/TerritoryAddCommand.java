@@ -27,7 +27,10 @@ public class TerritoryAddCommand extends BDKCommand {
 			statement.setString(3, name);
 			statement.setDouble(4, size);
 			statement.execute();
-			//
+			OpenTerritoriesCommand otc = new OpenTerritoriesCommand(mapId, 0);
+			otc.setHandler(handler);
+			otc.setConnection(connection);
+			otc.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

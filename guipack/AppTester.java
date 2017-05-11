@@ -102,7 +102,7 @@ public class AppTester {
 	 */
 	protected void createContents() {
 		
-		mapModel = new KMap[]{new KMap("Moscow")};
+		mapModel = new KMap[]{new KMap("Moscow", 5, "10")};
 		mapModel[0].setSize("140");
 		shell = new Shell();
 		
@@ -165,7 +165,7 @@ public class AppTester {
 				}
 		};
 		
-		maps.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 92);
+		maps.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 94);
 		
 		maps.getTable().addSelectionListener(new SelectionAdapter(){
 
@@ -178,8 +178,6 @@ public class AppTester {
 		
 		Menu mainMenu = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(mainMenu);
-		
-		placeModel = new KPlace[]{new KPlace("Castle", "Kremlyn", "450"), new KPlace("Tower", "Ostankino", "40")};
 		
 		places = new TableProvider(new ArrayContentProvider(), placeModel,leftTable, SWT.FULL_SELECTION);
 		

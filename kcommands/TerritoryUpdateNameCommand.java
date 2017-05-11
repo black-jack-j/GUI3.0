@@ -20,9 +20,8 @@ public class TerritoryUpdateNameCommand extends BDKCommand {
         statement.setString(1, name);
         statement.setInt(2, key);
         statement.execute();
-        //new command
         } catch (SQLException e) {
-            System.out.println("Возникла ошибка при попытке изменения имени территории.");
+            System.out.println("Problem while reading from database");
         }
     }
 }

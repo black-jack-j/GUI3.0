@@ -11,7 +11,8 @@ public class KPlace {
 		return ownerId;
 	}
 	
-	public KPlace(String key, String name, String square){
+	public KPlace(int ownerId, String key, String name, String square){
+		this.ownerId = ownerId;
 		this.key = key;
 		this.setName(name);
 		this.setSquare(square);

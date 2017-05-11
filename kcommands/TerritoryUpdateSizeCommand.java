@@ -20,9 +20,8 @@ public class TerritoryUpdateSizeCommand extends BDKCommand {
         statement.setString(1, size);
         statement.setInt(2, key);
         statement.execute();
-        //new command
         } catch (SQLException e) {
-            System.out.println("Возникла ошибка при попытке изменения размера территории.");
+            System.out.println("Problem while reading from database");
         }
     }
 }
