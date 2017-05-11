@@ -33,7 +33,7 @@ public class KeeperNameEditingSupport extends EditingSupport{
 	}
 	@Override
 	protected void setValue(Object arg0, Object arg1) {
-		if(!String.valueOf(arg1).trim().isEmpty())((Entry<String, Territory>)arg0).getValue().setName(String.valueOf(arg1));
+		if(!String.valueOf(arg1).trim().isEmpty() & String.valueOf(arg1).matches("[a-zA-Z0-9-]*"))((Entry<String, Territory>)arg0).getValue().setName(String.valueOf(arg1));
 		viewer.update(arg0, null);
 	}
 }

@@ -228,7 +228,7 @@ public class AppTester {
 				}
 		};
 		
-		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 92);
+		keepView.addColumns(providers, new String[]{"name", "size"}).setPretty().setSize(100, 94);
 		
 		keepView.getTable().addSelectionListener(new SelectionAdapter(){
 
@@ -373,24 +373,12 @@ public class AppTester {
 			}
 		});
 		
-		MenuItem mntmSave = new MenuItem(menu_1, SWT.NONE);
-		mntmSave.setText("Save");
-		
-		MenuItem mntmSaveAs = new MenuItem(menu_1, SWT.NONE);
-		mntmSaveAs.setText("Save As...");
-		
 		MenuItem mExit = new MenuItem(menu_1, SWT.NONE);
 		mExit.setText("Exit");
 		
-		MenuItem mntmEdit = new MenuItem(mainMenu, SWT.CASCADE);
-		mntmEdit.setText("Edit");
-		
-		Menu menu = new Menu(mntmEdit);
-		mntmEdit.setMenu(menu);
-		
-		MenuItem mntmPath = new MenuItem(menu, SWT.NONE);
-		mntmPath.setText("Path...");
 		mExit.addSelectionListener(new SelectionAdapter(){
+			
+			@Override
 			public void widgetSelected(SelectionEvent e){
 				shell.dispose();
 			}
@@ -507,10 +495,6 @@ public class AppTester {
 			}
 		});
 		
-		Shell browser = new Shell(SWT.DIALOG_TRIM  & (~SWT.RESIZE));
-		browser.setLayout(new FillLayout());
-		Browser bros = new Browser(browser,SWT.NONE);
-		
 		keepView.getTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -519,11 +503,9 @@ public class AppTester {
 				if (!selection1.isEmpty()){
 					if(e.button==3){
 						Menu keepConMenu = new Menu(keepView.getTable());
-						MenuItem edit = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem save = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem saveAs = new MenuItem(keepConMenu,SWT.NONE);
 						MenuItem delete = new MenuItem(keepConMenu,SWT.NONE);
-						edit.setText("Edit");
 						save.setText("Save");
 						saveAs.setText("Save As...");
 						delete.setText("Delete");
@@ -567,13 +549,14 @@ public class AppTester {
 			public void doubleClick(DoubleClickEvent arg0) {
 				IStructuredSelection s = (IStructuredSelection) arg0.getSelection();
 				if(!s.isEmpty()) {
+					Shell browser = new Shell(SWT.DIALOG_TRIM  & (~SWT.RESIZE) | SWT.APPLICATION_MODAL);
+					browser.setLayout(new FillLayout());
+					Browser bros = new Browser(browser,SWT.NONE);
 					bros.setUrl("http://maps.google.com/?q="+((Note)s.getFirstElement()).getKeep().getName());
 					System.out.println(bros.getUrl());
-					if (browser.isDisposed()){
+					if (browser.isDisposed() || !browser.isVisible()){
 						browser.setSize(640, 480);
 						browser.open();
-					}else if(browser.isVisible()){
-						bros.refresh();
 					}
 				}
 			}

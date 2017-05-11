@@ -110,10 +110,10 @@ public class AddShell {
 		nameField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				try {
-					if(nameField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(nameFail,nameField);
+					if(nameField.getText().trim().isEmpty()||  !nameField.getText().matches("[a-zA-Z0-9-]*")) throw new IncorrectFieldValueException(nameFail,nameField);
 					else nameFail.setVisible(false);
 				} catch (IncorrectFieldValueException e1) {
-					e1.setMessage("can't be empty");
+					e1.setMessage("incorrect value");
 				}
 			}
 		});
@@ -121,10 +121,10 @@ public class AddShell {
 		keyField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				try {
-					if(keyField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(keyFail,keyField);
+					if(keyField.getText().trim().isEmpty() || !keyField.getText().matches("[a-zA-Z0-9-]*")) throw new IncorrectFieldValueException(keyFail,keyField);
 					else keyFail.setVisible(false);
 				} catch (IncorrectFieldValueException e1) {
-					e1.setMessage("can't be empty");
+					e1.setMessage("incorrect value");
 				}
 			}
 		});
@@ -133,8 +133,8 @@ public class AddShell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					if (keyField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(keyFail, keyField);
-					if (nameField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(nameFail, nameField);
+					if (keyField.getText().trim().isEmpty() || !keyField.getText().matches("[a-zA-Z0-9-]*")) throw new IncorrectFieldValueException(keyFail, keyField);
+					if (nameField.getText().trim().isEmpty()||  !nameField.getText().matches("[a-zA-Z0-9-]*")) throw new IncorrectFieldValueException(nameFail, nameField);
 					if (sizeFail.isVisible()|sizeField.getText().trim().isEmpty()) throw new IncorrectFieldValueException(sizeFail, sizeField);
 					String s = sizeField.getText().replace(',', '.');
 					double square = Double.parseDouble(s);

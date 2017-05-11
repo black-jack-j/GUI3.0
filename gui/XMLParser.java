@@ -20,7 +20,6 @@ public class XMLParser{
 				tmp.addComponent(el.getAttributeValue("key"), place);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
 			tmp = new Keeper("Default");
 		}
 		return tmp;

@@ -171,7 +171,7 @@ public class Keeper{
 			}
 			doc.setRootElement(rootElem);
 			Format f = Format.getPrettyFormat();
-			f.setEncoding("cp1251");
+			f.setEncoding("UTF-8");
 			XMLOutputter xml = new XMLOutputter(f);
 			try {
 				xml.output(doc, osw);
@@ -237,8 +237,5 @@ public class Keeper{
 	public void  save(File f) {
 		// TODO Auto-generated method stub
 		this.getXML(f);
-	}
-	public int getId() {
-		return id;
 	}
 }

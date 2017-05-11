@@ -19,7 +19,7 @@ public class KeeperInc {
 	private KeeperController control;
 	public KeeperInc(Shell parent, KeeperController tmp){
 		Shell window = new Shell(parent, SWT.DIALOG_TRIM|SWT.APPLICATION_MODAL&(~SWT.RESIZE));
-		window.setSize(400, 200);
+		window.setSize(400, 250);
 		
 		Label nameFail = new Label(window, SWT.NONE);
 		nameFail.setText("incorrect value");
@@ -32,7 +32,7 @@ public class KeeperInc {
 		instruction.setText("Name of map");
 		instruction.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 		instruction.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
-		instruction.setBounds(110, 50, 150, 15);
+		instruction.setBounds(110, 45, 150, 25);
 		instruction.setVisible(true);
 
 		control = tmp;
@@ -41,7 +41,7 @@ public class KeeperInc {
 		FName.setText("");
 		FName.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
-					if(FName.getText().trim().isEmpty()) nameFail.setVisible(true);
+					if(FName.getText().trim().isEmpty() || !FName.getText().matches("[a-zA-Z0-9-]*")) nameFail.setVisible(true);
 					else nameFail.setVisible(false);
 			}
 		});
@@ -50,7 +50,7 @@ public class KeeperInc {
 		BOk.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (FName.getText().trim().isEmpty()) { }
+				if (FName.getText().trim().isEmpty()|| !FName.getText().matches("[a-zA-Z0-9-]*")) { }
 				else {
 					KeeperAddEvent kae = new KeeperAddEvent(e,FName.getText());
 					kae.m = KeeperAddEvent.Mode.create;

@@ -191,13 +191,13 @@ public class KeeperController {
 					loadKeeper(collections, children.get(i).getAttributeValue("value"),listeners);
 				}
 			}else{
-				String s = "<?xml version=\"1.0\"?/>";
+				String s = "<xml version=\"1.0\" encoding=\"UTF-8\"/>";
 				FileWriter fw = new FileWriter(f);
 				fw.write(s);
 				fw.close();
 			}
 		} catch (JDOMException e) {
-			String s = "<?xml version=\"1.0\"?/>";
+			String s = "<xml version=\"1.0\" encoding=\"UTF-8\" />";
 			FileWriter fw = new FileWriter(f);
 			fw.write(s);
 			fw.close();
